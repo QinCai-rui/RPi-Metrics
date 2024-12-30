@@ -3,10 +3,11 @@ import urequests as requests
 from machine import Pin, I2C
 from ssd1306 import SSD1306_I2C
 import time
+import env
 
 # Define Wi-Fi credentials
-SSID = 'SSID'
-PASSWORD = 'Password'
+SSID = env.ssid
+PASSWORD = env.password
 
 # Initialise the display
 i2c = I2C(0, scl=Pin(17), sda=Pin(16))
