@@ -52,4 +52,5 @@ dmypy.json
 .vscode/
 
 # Specific files and directories
+env*
 .env*
