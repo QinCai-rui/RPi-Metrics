@@ -31,24 +31,12 @@ if [ "$1" = "-y" ]; then
     AUTO_CONFIRM=true
 fi
 
-
 log_success() {
     echo -e "${GREEN}[✔] $1${NC}"
 }
 
 log_failure() {
     echo -e "${RED}[✘] $1${NC}"
-}
-
-confirm() {
-    while true; do
-        read -p "$1 [y/n]: " yn
-        case $yn in
-            [Yy]* ) break;;
-            [Nn]* ) echo "Installation aborted."; exit;;
-            * ) echo "Please answer yes or no.";;
-        esac
-    done
 }
 
 check_root() {
