@@ -11,6 +11,27 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+AUTO_CONFIRM=false
+
+confirm() {
+    if [ "$AUTO_CONFIRM" = true ]; then
+        return 0
+    fi
+    while true; do
+        read -p "$1 [y/n]: " yn
+        case $yn in
+            [Yy]* ) break;;
+            [Nn]* ) echo "Installation aborted."; exit;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
+}
+
+if [ "$1" = "-y" ]; then
+    AUTO_CONFIRM=true
+fi
+
+
 log_success() {
     echo -e "${GREEN}[✔] $1${NC}"
 }
