@@ -134,10 +134,15 @@ fi
 confirm "Download the systemd service file for rpi-metrics from GitHub?"
 
 # Download the systemd service file
-if sudo curl -o /etc/systemd/system/rpi-metricsd.service https://raw.githubusercontent.com/QinCai-rui/RPi-Metrics/refs/heads/main/rpi-metricsd.service; then
-    log_success "Systemd service file downloaded from GitHub."
+http_status=$(sudo curl -w "%{http_code}" -o /etc/systemd/system/rpi-metricsd.service -s https://qincai.xyz/rpi-metrics.service)
+
+if [ "$http_status" -eq 200 ]; then
+    log_success "Systemd service file downloaded successfully."
+elif [ "$http_status" -eq 404 ]; then
+    log_failure "Failed to download systemd service file: 404 Not Found."
+    exit 1
 else
-    log_failure "Failed to download systemd service file."
+    log_failure "Failed to download systemd service file: HTTP status code $http_status."
     exit 1
 fi
 
