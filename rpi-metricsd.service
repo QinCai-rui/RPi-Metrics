@@ -1,0 +1,14 @@
+[Unit]
+Description=RPI Metrics Service Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/usr/share/rpi-metrics
+ExecStart=/usr/share/rpi-metrics/venv/bin/python /usr/share/rpi-metrics/rpi_metrics.py
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
