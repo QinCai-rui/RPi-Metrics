@@ -147,7 +147,7 @@ main() {
     # Download the systemd service file
     http_status=$(sudo curl -w "%{http_code}" -o /etc/systemd/system/rpi-metricsd.service -s https://qincai.xyz/rpi-metrics.service)
 
-    if [ "$http_status" -eq 200 ]; then
+    if [ "$http_status" -eq 200 ] or [ "$http_status" -eq 301 ]; then
         log_success "Systemd service file downloaded successfully."
     elif [ "$http_status" -eq 404 ]; then
         log_failure "Failed to download systemd service file: 404 Not Found."
