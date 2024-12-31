@@ -82,7 +82,7 @@ elif [ "$1" = "--dry" ]; then
 else
     echo "Usage: $0 --dry | --wet"
     echo "--dry: Standard uninstallation without removing Python packages."
-    echo "--wet: Full uninstallation including removal of Python packages."
+    echo "--wet: WARNING: USE WITH CARE!! Full uninstallation including removal of Python and Python packages."
     exit 1
 fi
 
