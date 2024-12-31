@@ -14,16 +14,14 @@ NC='\033[0m' # No Color
 AUTO_CONFIRM=false
 
 confirm() {
-    echo "Inside confirm function"
     if [ "$AUTO_CONFIRM" = true ]; then
-        echo "Auto-confirm is enabled, returning 0"
         return 0
     fi
 
     read -r -p "$1 [y/n]: " yn
     case $yn in
-        [Yy]* ) echo "User confirmed yes"; return 0;;
-        [Nn]* ) echo "User aborted"; echo "Installation aborted."; exit 1;;
+        [Yy]* ) return 0;;
+        [Nn]* ) echo "Installation aborted."; exit 1;;
         * ) echo "Please answer yes or no.";;
     esac
 }
@@ -41,16 +39,13 @@ log_failure() {
 }
 
 check_root() {
-    echo "Inside check_root"
     if [ "$EUID" -ne 0 ]; then
         log_failure "Please run as root."
         exit 1
     fi
-    echo "Finished check_root"
 }
 
 check_curl() {
-    echo "Inside check_curl"
     if ! command -v curl &> /dev/null; then
         log_failure "curl could not be found."
         confirm "Install curl?"
@@ -59,7 +54,6 @@ check_curl() {
     else
         log_success "curl is already installed."
     fi
-    echo "Finished check_curl"
 }
 
 main() {
@@ -76,19 +70,15 @@ main() {
     echo "Make sure you downloaded this script from a trustworthy source!!"
 
     # Check for root privileges
-    echo "Checking for root privileges..."
     check_root
 
     # Check and install curl if necessary
-    echo "Checking for curl installation..."
     check_curl
 
     # Confirm to proceed
-    echo "About to confirm proceeding with package list update and installation..."
     confirm "Update your package list and install necessary packages?"
 
     # Update package list and install necessary packages
-    echo "Updating package list and installing necessary packages..."
     if sudo apt update && sudo apt install -y python3 python3-pip python3-venv; then
         log_success "Package list updated and necessary packages installed."
     else
@@ -97,11 +87,9 @@ main() {
     fi
 
     # Confirm to create the directory
-    echo "About to confirm creating the directory for rpi-metrics..."
     confirm "Create a directory for rpi-metrics in /usr/share?"
 
     # Create a directory for rpi-metrics
-    echo "Creating directory for rpi-metrics..."
     if sudo mkdir -p /usr/share/rpi-metrics && cd /usr/share/rpi-metrics; then
         log_success "Directory for rpi-metrics created in /usr/share."
     else
@@ -110,11 +98,9 @@ main() {
     fi
 
     # Confirm to set up a virtual environment
-    echo "About to confirm setting up a virtual environment..."
     confirm "Set up a virtual environment in /usr/share/rpi-metrics?"
 
     # Set up a virtual environment and activate it
-    echo "Setting up virtual environment..."
     if sudo python3 -m venv venv && source venv/bin/activate; then
         log_success "Virtual environment set up and activated in /usr/share/rpi-metrics."
     else
@@ -123,11 +109,9 @@ main() {
     fi
 
     # Confirm to install Flask
-    echo "About to confirm installing Flask..."
     confirm "Install Flask in the virtual environment?"
 
     # Install Flask
-    echo "Installing Flask..."
     if sudo venv/bin/pip install Flask; then
         log_success "Flask installed in the virtual environment."
     else
@@ -136,11 +120,9 @@ main() {
     fi
 
     # Confirm to download the server file
-    echo "About to confirm downloading the RPi-Metrics server file..."
     confirm "Download the RPi-Metrics server file from GitHub?"
 
     # Download the rpi-metrics server file
-    echo "Downloading rpi-metrics server file..."
     if curl -o rpi_metrics.py https://raw.githubusercontent.com/QinCai-rui/RPi-Metrics/refs/heads/main/RPi-Metrics-server.py; then
         log_success "rpi-metrics server file downloaded from GitHub."
     else
@@ -149,11 +131,9 @@ main() {
     fi
 
     # Confirm to deactivate the virtual environment
-    echo "About to confirm deactivating the virtual environment..."
     confirm "Deactivate the virtual environment?"
 
     # Deactivate the virtual environment
-    echo "Deactivating virtual environment..."
     if deactivate; then
         log_success "Virtual environment deactivated."
     else
@@ -162,11 +142,9 @@ main() {
     fi
 
     # Confirm to download the systemd service file
-    echo "About to confirm downloading the systemd service file..."
     confirm "Download the systemd service file for rpi-metrics from GitHub?"
 
     # Download the systemd service file
-    echo "Downloading systemd service file..."
     http_status=$(sudo curl -w "%{http_code}" -o /etc/systemd/system/rpi-metricsd.service -s https://qincai.xyz/rpi-metrics.service)
 
     if [ "$http_status" -eq 200 ]; then
@@ -180,7 +158,6 @@ main() {
     fi
 
     # Reload systemd daemon
-    echo "Reloading systemd daemon..."
     if sudo systemctl daemon-reload; then
         log_success "Systemd daemon reloaded."
     else
@@ -189,11 +166,9 @@ main() {
     fi
 
     # Confirm to start and enable the service
-    echo "About to confirm starting and enabling the rpi-metricsd service..."
     confirm "Start and enable the rpi-metricsd service?"
 
     # Start and enable the rpi-metricsd service
-    echo "Starting and enabling rpi-metricsd service..."
     if sudo systemctl start rpi-metricsd && sudo systemctl enable rpi-metricsd; then
         log_success "rpi-metricsd service started and enabled."
     else
