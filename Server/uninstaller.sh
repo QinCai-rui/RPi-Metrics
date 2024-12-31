@@ -3,7 +3,7 @@
 # Created with love by QinCai with assistance from Copilot
 # This script provides two options for uninstallation:
 # --dry: Standard uninstallation without removing Python packages.
-# --extra-dry: Full uninstallation including removal of Python packages.
+# --wet: Full uninstallation including removal of Python packages.
 
 set -e
 
@@ -12,7 +12,7 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-EXTRA_DRY_RUN=false
+REMOVE_PYTHON_PACKAGES=false
 
 log_success() {
     echo -e "${GREEN}[✔] $1${NC}"
@@ -60,8 +60,8 @@ main() {
         exit 1
     fi
 
-    # Optionally remove python3 and related packages if --extra-dry is used
-    if [ "$EXTRA_DRY_RUN" = true ]; then
+    # Optionally remove python3 and related packages if --wet is used
+    if [ "$REMOVE_PYTHON_PACKAGES" = true ]; then
         if sudo apt remove --purge -y python3 python3-pip python3-venv; then
             log_success "python3 and related packages removed."
         else
@@ -74,15 +74,15 @@ main() {
     echo "RPi Metrics uninstallation completed!"
 }
 
-# Check for --dry or --extra-dry argument
-if [ "$1" = "--extra-dry" ]; then
-    EXTRA_DRY_RUN=true
+# Check for --dry or --wet argument
+if [ "$1" = "--wet" ]; then
+    REMOVE_PYTHON_PACKAGES=true
 elif [ "$1" = "--dry" ]; then
-    EXTRA_DRY_RUN=false
+    REMOVE_PYTHON_PACKAGES=false
 else
-    echo "Usage: $0 --dry | --extra-dry"
+    echo "Usage: $0 --dry | --wet"
     echo "--dry: Standard uninstallation without removing Python packages."
-    echo "--extra-dry: Full uninstallation including removal of Python packages."
+    echo "--wet: Full uninstallation including removal of Python packages."
     exit 1
 fi
 
