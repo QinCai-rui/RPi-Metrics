@@ -14,14 +14,16 @@ NC='\033[0m' # No Color
 AUTO_CONFIRM=false
 
 confirm() {
+    echo "Inside confirm function"
     if [ "$AUTO_CONFIRM" = true ]; then
+        echo "Auto-confirm is enabled, returning 0"
         return 0
     fi
     while true; do
         read -p "$1 [y/n]: " yn
         case $yn in
-            [Yy]* ) return 0;;
-            [Nn]* ) echo "Installation aborted."; exit;;
+            [Yy]* ) echo "User confirmed yes"; return 0;;
+            [Nn]* ) echo "User aborted"; echo "Installation aborted."; exit;;
             * ) echo "Please answer yes or no.";;
         esac
     done
