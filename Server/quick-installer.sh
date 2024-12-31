@@ -19,14 +19,13 @@ confirm() {
         echo "Auto-confirm is enabled, returning 0"
         return 0
     fi
-    while true; do
-        read -r -p "$1 [y/n]: " yn
-        case $yn in
-            [Yy]* ) echo "User confirmed yes"; return 0;;
-            [Nn]* ) echo "User aborted"; echo "Installation aborted."; exit 1;;
-            * ) echo "Please answer yes or no.";;
-        esac
-    done
+
+    read -r -p "$1 [y/n]: " yn
+    case $yn in
+        [Yy]* ) echo "User confirmed yes"; return 0;;
+        [Nn]* ) echo "User aborted"; echo "Installation aborted."; exit 1;;
+        * ) echo "Please answer yes or no.";;
+    esac
 }
 
 if [ "$1" = "-y" ]; then
