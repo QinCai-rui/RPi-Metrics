@@ -58,6 +58,8 @@ check_curl() {
 }
 
 main() {
+    echo "Starting main function..."
+
     echo "  _____   _____  _   __  __        _          _            "
     echo " |  __ \ |  __ \(_) |  \/  |      | |        (_)           "
     echo " | |__) || |__) |_  | \  / |  ___ | |_  _ __  _   ___  ___ "
@@ -69,15 +71,18 @@ main() {
     echo "Make sure you downloaded this script from a trustworthy source!!"
 
     # Check for root privileges
+    echo "Checking for root privileges..."
     check_root
 
     # Check and install curl if necessary
+    echo "Checking for curl installation..."
     check_curl
 
     # Confirm to proceed
     confirm "Update your package list and install necessary packages?"
 
     # Update package list and install necessary packages
+    echo "Updating package list and installing necessary packages..."
     if sudo apt update && sudo apt install -y python3 python3-pip python3-venv; then
         log_success "Package list updated and necessary packages installed."
     else
@@ -89,6 +94,7 @@ main() {
     confirm "Create a directory for rpi-metrics in /usr/share?"
 
     # Create a directory for rpi-metrics
+    echo "Creating directory for rpi-metrics..."
     if sudo mkdir -p /usr/share/rpi-metrics && cd /usr/share/rpi-metrics; then
         log_success "Directory for rpi-metrics created in /usr/share."
     else
@@ -100,6 +106,7 @@ main() {
     confirm "Set up a virtual environment in /usr/share/rpi-metrics?"
 
     # Set up a virtual environment and activate it
+    echo "Setting up virtual environment..."
     if sudo python3 -m venv venv && source venv/bin/activate; then
         log_success "Virtual environment set up and activated in /usr/share/rpi-metrics."
     else
@@ -111,6 +118,7 @@ main() {
     confirm "Install Flask in the virtual environment?"
 
     # Install Flask
+    echo "Installing Flask..."
     if sudo venv/bin/pip install Flask; then
         log_success "Flask installed in the virtual environment."
     else
@@ -122,6 +130,7 @@ main() {
     confirm "Download the RPi-Metrics server file from GitHub?"
 
     # Download the rpi-metrics server file
+    echo "Downloading rpi-metrics server file..."
     if curl -o rpi_metrics.py https://raw.githubusercontent.com/QinCai-rui/RPi-Metrics/refs/heads/main/RPi-Metrics-server.py; then
         log_success "rpi-metrics server file downloaded from GitHub."
     else
@@ -133,6 +142,7 @@ main() {
     confirm "Deactivate the virtual environment?"
 
     # Deactivate the virtual environment
+    echo "Deactivating virtual environment..."
     if deactivate; then
         log_success "Virtual environment deactivated."
     else
@@ -144,11 +154,10 @@ main() {
     confirm "Download the systemd service file for rpi-metrics from GitHub?"
 
     # Download the systemd service file
+    echo "Downloading systemd service file..."
     http_status=$(sudo curl -w "%{http_code}" -o /etc/systemd/system/rpi-metricsd.service -s https://qincai.xyz/rpi-metrics.service)
 
     if [ "$http_status" -eq 200 ]; then
-        log_success "Systemd service file downloaded successfully."
-    elif [ "$http_status" -eq 301 ]; then
         log_success "Systemd service file downloaded successfully."
     elif [ "$http_status" -eq 404 ]; then
         log_failure "Failed to download systemd service file: 404 Not Found."
@@ -159,6 +168,7 @@ main() {
     fi
 
     # Reload systemd daemon
+    echo "Reloading systemd daemon..."
     if sudo systemctl daemon-reload; then
         log_success "Systemd daemon reloaded."
     else
@@ -170,6 +180,7 @@ main() {
     confirm "Start and enable the rpi-metricsd service?"
 
     # Start and enable the rpi-metricsd service
+    echo "Starting and enabling rpi-metricsd service..."
     if sudo systemctl start rpi-metricsd && sudo systemctl enable rpi-metricsd; then
         log_success "rpi-metricsd service started and enabled."
     else
@@ -180,5 +191,5 @@ main() {
     echo "RPi Metrics installation completed!"
 }
 
-# Call the main function. Like this devarsh?? #TESTING
+# Call the main function
 main "$@"
