@@ -83,7 +83,7 @@ else
     echo "Usage: $0 --dry | --wet"
     echo "--dry: Standard uninstallation without removing Python packages."
     echo "--wet: WARNING: USE WITH CARE!! Full uninstallation including removal of Python and Python packages."
-    echo "YOU HAVE BEEN WARNED: DO NOT USE THE --wet FLAG UNLESS YOU WANT TO DELETE PYTHON FROM YOUR SYSTEM!!"
+    echo "YOU HAVE BEEN WARNED: DO NOT USE THE --wet FLAG UNLESS YOU WANT TO REMOVE PYTHON FROM YOUR SYSTEM!!"
     exit 1
 fi
 
