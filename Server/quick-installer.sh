@@ -40,13 +40,16 @@ log_failure() {
 }
 
 check_root() {
+    echo "Inside check_root"
     if [ "$EUID" -ne 0 ]; then
         log_failure "Please run as root."
         exit 1
     fi
+    echo "Finished check_root"
 }
 
 check_curl() {
+    echo "Inside check_curl"
     if ! command -v curl &> /dev/null; then
         log_failure "curl could not be found."
         confirm "Install curl?"
@@ -55,6 +58,7 @@ check_curl() {
     else
         log_success "curl is already installed."
     fi
+    echo "Finished check_curl"
 }
 
 main() {
@@ -79,6 +83,7 @@ main() {
     check_curl
 
     # Confirm to proceed
+    echo "About to confirm proceeding with package list update and installation..."
     confirm "Update your package list and install necessary packages?"
 
     # Update package list and install necessary packages
@@ -91,6 +96,7 @@ main() {
     fi
 
     # Confirm to create the directory
+    echo "About to confirm creating the directory for rpi-metrics..."
     confirm "Create a directory for rpi-metrics in /usr/share?"
 
     # Create a directory for rpi-metrics
@@ -103,6 +109,7 @@ main() {
     fi
 
     # Confirm to set up a virtual environment
+    echo "About to confirm setting up a virtual environment..."
     confirm "Set up a virtual environment in /usr/share/rpi-metrics?"
 
     # Set up a virtual environment and activate it
@@ -115,6 +122,7 @@ main() {
     fi
 
     # Confirm to install Flask
+    echo "About to confirm installing Flask..."
     confirm "Install Flask in the virtual environment?"
 
     # Install Flask
@@ -127,6 +135,7 @@ main() {
     fi
 
     # Confirm to download the server file
+    echo "About to confirm downloading the RPi-Metrics server file..."
     confirm "Download the RPi-Metrics server file from GitHub?"
 
     # Download the rpi-metrics server file
@@ -139,6 +148,7 @@ main() {
     fi
 
     # Confirm to deactivate the virtual environment
+    echo "About to confirm deactivating the virtual environment..."
     confirm "Deactivate the virtual environment?"
 
     # Deactivate the virtual environment
@@ -151,6 +161,7 @@ main() {
     fi
 
     # Confirm to download the systemd service file
+    echo "About to confirm downloading the systemd service file..."
     confirm "Download the systemd service file for rpi-metrics from GitHub?"
 
     # Download the systemd service file
@@ -177,6 +188,7 @@ main() {
     fi
 
     # Confirm to start and enable the service
+    echo "About to confirm starting and enabling the rpi-metricsd service..."
     confirm "Start and enable the rpi-metricsd service?"
 
     # Start and enable the rpi-metricsd service
