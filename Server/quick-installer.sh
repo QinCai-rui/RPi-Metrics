@@ -148,6 +148,8 @@ main() {
 
     if [ "$http_status" -eq 200 ]; then
         log_success "Systemd service file downloaded successfully."
+    elif [ "$http_status" -eq 301 ]; then
+        log_success "Systemd service file downloaded successfully."
     elif [ "$http_status" -eq 404 ]; then
         log_failure "Failed to download systemd service file: 404 Not Found."
         exit 1
