@@ -123,10 +123,15 @@ main() {
     confirm "Download the RPi-Metrics server file from GitHub?"
 
     # Download the rpi-metrics server file
-    if curl -o rpi_metrics.py https://raw.githubusercontent.com/QinCai-rui/RPi-Metrics/refs/heads/main/RPi-Metrics-server.py; then
-        log_success "rpi-metrics server file downloaded from GitHub."
+    http_status=$(sudo curl -L -w "%{http_code}" -o rpi_metrics.py -s https://qincai.xyz/rpi-metrics-server.py)
+
+    if [ "$http_status" -eq 200 ] || [ "$http_status" -eq 301 ]; then
+        log_success "rpi-metrics server file downloaded successfully."
+    elif [ "$http_status" -eq 404 ]; then
+        log_failure "Failed to download rpi-metrics server file: 404 Not Found."
+        exit 1
     else
-        log_failure "Failed to download rpi-metrics server file."
+        log_failure "Failed to download rpi-metrics server file: HTTP status code $http_status."
         exit 1
     fi
 
