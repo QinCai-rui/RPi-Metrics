@@ -20,7 +20,7 @@ confirm() {
     while true; do
         read -p "$1 [y/n]: " yn
         case $yn in
-            [Yy]* ) break;;
+            [Yy]* ) return 0;;
             [Nn]* ) echo "Installation aborted."; exit;;
             * ) echo "Please answer yes or no.";;
         esac
