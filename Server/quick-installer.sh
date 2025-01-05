@@ -83,25 +83,24 @@ check_curl() {
 }
 
 main() {
+    clear
+    echo -e "${CYAN}Welcome to the RPi Metrics installation script!${NC}"
     echo "  _____   _____  _   __  __        _          _            "
     echo " |  __ \ |  __ \(_) |  \/  |      | |        (_)           "
     echo " | |__) || |__) |_  | \  / |  ___ | |_  _ __  _   ___  ___ "
     echo " |  _  / |  ___/| | | |\/| | / _ \| __|| '__|| | / __|/ __|"
     echo " | | \ \ | |    | | | |  | ||  __/| |_ | |   | || (__ \__ \\"
     echo " |_|  \_\|_|    |_| |_|  |_| \___| \__||_|   |_| \___||___/"
-    echo -e "${CYAN}Welcome to the RPi Metrics installation script!${NC}"
     echo "Make sure that you have downloaded this script from a trustworthy source!!"
     echo ""
-    echo -e "${BLUE}"
-    echo "#########################################################"
+    echo -e "${BLUE}#########################################################"
     echo "#                   Not working??                       #"
     echo "#                                                       #"
     echo "#  Try running these, one after another:                #"
     echo "#   \$ wget https://qincai.xyz/rpi-metrics-installer.sh  #"
     echo "#   \$ chmod +x rpi-metrics-installer.sh                 #"
     echo "#   \$ sudo ./rpi-metrics-installer.sh                   #"
-    echo "#########################################################"
-    echo -e "${NC}"
+    echo "#########################################################${NC}"
 
     check_root
 
