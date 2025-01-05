@@ -84,13 +84,13 @@ check_curl() {
 
 main() {
     clear
-    echo -e "${CYAN}Welcome to the RPi Metrics installation script!${NC}"
-    echo -e "${CYAN}  _____   _____  _   __  __        _          _            ${NC}"
-    echo -e "${CYAN} |  __ \ |  __ \(_) |  \/  |      | |        (_)           ${NC}"
-    echo -e "${CYAN} | |__) || |__) |_  | \  / |  ___ | |_  _ __  _   ___  ___ ${NC}"
-    echo -e "${CYAN} |  _  / |  ___/| | | |\/| | / _ \| __|| '__|| | / __|/ __|${NC}"
-    echo -e "${CYAN} | | \ \ | |    | | | |  | ||  __/| |_ | |   | || (__ \__ \\${NC}"
-    echo -e "${CYAN} |_|  \_\|_|    |_| |_|  |_| \___| \__||_|   |_| \___||___/${NC}"
+    echo -e "${CYAN}Welcome to the RPi Metrics installation script!"
+    echo -e "${CYAN}  _____   _____  _   __  __        _          _            "
+    echo -e "${CYAN} |  __ \ |  __ \(_) |  \/  |      | |        (_)           "
+    echo -e "${CYAN} | |__) || |__) |_  | \  / |  ___ | |_  _ __  _   ___  ___ "
+    echo -e "${CYAN} |  _  / |  ___/| | | |\/| | / _ \| __|| '__|| | / __|/ __|"
+    echo -e "${CYAN} | | \ \ | |    | | | |  | ||  __/| |_ | |   | || (__ \__ \\"
+    echo -e "${CYAN} |_|  \_\|_|    |_| |_|  |_| \___| \__||_|   |_| \___||___/"
     echo "Make sure that you have downloaded this script from a trustworthy source!!"
     echo ""
     echo -e "${BLUE}#########################################################"
@@ -100,7 +100,7 @@ main() {
     echo "#   \$ wget https://qincai.xyz/rpi-metrics-installer.sh  #"
     echo "#   \$ chmod +x rpi-metrics-installer.sh                 #"
     echo "#   \$ sudo ./rpi-metrics-installer.sh                   #"
-    echo -e "#########################################################${NC}"
+    echo "#########################################################"
     echo ""
 
     check_root
@@ -209,4 +209,15 @@ main() {
 
     log_info "Starting and enabling the rpi-metricsd service..."
     # Start and enable the rpi-metricsd service
-    if sudo systemctl start rpi-metricsd &&
+    if sudo systemctl start rpi-metricsd && sudo systemctl enable rpi-metricsd; then
+        log_success "rpi-metricsd service started and enabled."
+    else
+        log_failure "Failed to start or enable rpi-metricsd service."
+        exit 1
+    fi
+
+    echo -e "${GREEN}RPi Metrics installation completed!${NC}"
+}
+
+# Call the main function
+main "$@"
