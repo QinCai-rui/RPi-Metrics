@@ -9,6 +9,8 @@ import env
 SSID = env.ssid
 PASSWORD = env.password
 
+SERVER_URL = env.serverurl
+TIME_INTERVAL = 1
 # Initialise the display
 i2c = I2C(0, scl=Pin(17), sda=Pin(16))
 oled_width = 128
@@ -37,7 +39,7 @@ def connect_wifi(ssid, password):
 def fetch_data():
     try:
         global response
-        response = requests.get('https://pi-monitor.qincai.xyz')
+        response = requests.get(SERVER_URL)
         if response.status_code != 200:
             #oled.fill(0)
             #oled.text(f"HTTP {response.status_code}", 0, 0)
@@ -48,6 +50,7 @@ def fetch_data():
         oled.fill(0)
         oled.text("Conn Err", 0, 0)
         oled.show()
+        time.sleep(2)
         return None
     except ValueError:
         oled.fill(0)
@@ -60,15 +63,16 @@ def display_data(data):
     oled.fill(0)  # Clear the display
     if data:
         oled.text(f"{data['Current Time']}", 0, 0)  # Date and time
-        #oled.text(f"{data['IP Address']}", 0, 12)  # IP address
-        oled.text(f"CPU: {data['CPU Usage']} {data['SoC Temperature']}", 0, 24)  # CPU and temperature
-        oled.text(f"RAM: {data['Used RAM']}/{data['Total RAM']}", 0, 36)  # RAM
-        oled.text(f"VM: {data['Used Swap']}/{data['Total Swap']}", 0, 48)  # Swap
+        oled.text(f"{data['IP Address']}", 0, 12)  # IP address
+        oled.text(f"CPU: {data['CPU Usage']} {data['SoC Temperature']}", 0, 26)  # CPU and temperature
+        oled.text(f"RAM: {data['Used RAM']}/{data['Total RAM']}", 0, 38)  # RAM
+        oled.text(f"VM: {data['Used Swap']}/{data['Total Swap']}", 0, 50)  # Swap
     elif response.status_code != 200:
         oled.text(f"HTTP {response.status_code}", 0, 0)
     else:
         oled.text("No Data", 0, 0)
     oled.show()
+    time.sleep(2)
 
 # Main loop
 def main():
@@ -83,7 +87,7 @@ def main():
             oled.fill(0)
             oled.text("Err Occurred", 0, 0)
             oled.show()
-        time.sleep(3)
+        time.sleep(TIME_INTERVAL)
 
 if __name__ == "__main__":
     main()
