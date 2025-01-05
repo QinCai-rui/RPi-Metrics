@@ -101,6 +101,7 @@ main() {
     echo "#   \$ chmod +x rpi-metrics-installer.sh                 #"
     echo "#   \$ sudo ./rpi-metrics-installer.sh                   #"
     echo "#########################################################${NC}"
+    echo ""
 
     check_root
 
