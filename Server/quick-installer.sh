@@ -220,5 +220,4 @@ main() {
     echo -e "${GREEN}RPi Metrics installation completed!${NC}"
 }
 
-# Call the main function
 main "$@"
