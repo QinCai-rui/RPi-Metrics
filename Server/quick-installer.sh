@@ -72,7 +72,7 @@ check_rpi() {
 
 check_curl() {
     log_info "Checking for curl..."
-    if ! command -v curl &> /dev/null; then
+    if ! command -v curl -sL example.com &> /dev/null; then
         log_failure "curl could not be found."
         confirm "Install curl?"
         sudo apt update && sudo apt install -y curl
