@@ -84,14 +84,15 @@ check_curl() {
 
 main() {
     clear
-    echo -e "${CYAN}Welcome to the RPi Metrics installation script!"
+    echo "Welcome to the RPi Metrics installation script!"
     echo -e "${CYAN}  _____   _____  _   __  __        _          _            "
     echo -e "${CYAN} |  __ \ |  __ \(_) |  \/  |      | |        (_)           "
     echo -e "${CYAN} | |__) || |__) |_  | \  / |  ___ | |_  _ __  _   ___  ___ "
     echo -e "${CYAN} |  _  / |  ___/| | | |\/| | / _ \| __|| '__|| | / __|/ __|"
     echo -e "${CYAN} | | \ \ | |    | | | |  | ||  __/| |_ | |   | || (__ \__ \\"
     echo -e "${CYAN} |_|  \_\|_|    |_| |_|  |_| \___| \__||_|   |_| \___||___/"
-    echo "Make sure that you have downloaded this script from a trustworthy source!!"
+    echo ""
+    echo -e "${NC}Make sure that you have downloaded this script from a trustworthy source!!"
     echo ""
     echo -e "${BLUE}#########################################################"
     echo "#                   Not working??                       #"
