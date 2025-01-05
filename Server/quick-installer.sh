@@ -9,6 +9,10 @@ set -e
 # Colors for output
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+YELLOW='\033[1;33m'
+BLUE='\033[1;34m'
+MAGENTA='\033[1;35m'
+CYAN='\033[1;36m'
 NC='\033[0m' # No Color
 
 AUTO_CONFIRM=false
@@ -21,8 +25,8 @@ confirm() {
     read -r -p "$1 [y/n]: " yn
     case $yn in
         [Yy]* ) return 0;;
-        [Nn]* ) echo "Installation aborted."; exit 1;;
-        * ) echo "Please answer yes or no.";;
+        [Nn]* ) echo -e "${RED}Installation aborted.${NC}"; exit 1;;
+        * ) echo -e "${YELLOW}Please answer yes or no.${NC}";;
     esac
 }
 
@@ -38,14 +42,36 @@ log_failure() {
     echo -e "${RED}[✘] $1${NC}"
 }
 
+log_info() {
+    echo -e "${BLUE}[ℹ] $1${NC}"
+}
+
+log_warning() {
+    echo -e "${MAGENTA}[⚠] $1${NC}"
+}
+
 check_root() {
+    log_info "Checking for root privileges..."
     if [ "$EUID" -ne 0 ]; then
         log_failure "Please run as root."
+        exit 1
+    else
+        log_success "Running as root."
+    fi
+}
+
+check_rpi() {
+    log_info "Checking if running on a Raspberry Pi..."
+    if grep -q "Raspberry Pi" /proc/cpuinfo; then
+        log_success "Running on a Raspberry Pi."
+    else
+        log_failure "This script can only be run on a Raspberry Pi."
         exit 1
     fi
 }
 
 check_curl() {
+    log_info "Checking for curl..."
     if ! command -v curl &> /dev/null; then
         log_failure "curl could not be found."
         confirm "Install curl?"
@@ -57,8 +83,6 @@ check_curl() {
 }
 
 main() {
-    echo "Starting main function..."
-
     echo "  _____   _____  _   __  __        _          _            "
     echo " |  __ \ |  __ \(_) |  \/  |      | |        (_)           "
     echo " | |__) || |__) |_  | \  / |  ___ | |_  _ __  _   ___  ___ "
@@ -66,18 +90,18 @@ main() {
     echo " | | \ \ | |    | | | |  | ||  __/| |_ | |   | || (__ \__ \\"
     echo " |_|  \_\|_|    |_| |_|  |_| \___| \__||_|   |_| \___||___/"
     echo "                                                           "
-    echo "Welcome to the RPi Metrics installation script!"
+    echo -e "${CYAN}Welcome to the RPi Metrics installation script!${NC}"
     echo "Make sure you downloaded this script from a trustworthy source!!"
 
-    # Check for root privileges
     check_root
 
-    # Check and install curl if necessary
+    check_rpi
+
     check_curl
 
-    # Confirm to proceed
     confirm "Update your package list and install necessary packages?"
 
+    log_info "Updating package list and installing necessary packages..."
     # Update package list and install necessary packages
     if sudo apt update && sudo apt install -y python3 python3-pip python3-venv; then
         log_success "Package list updated and necessary packages installed."
@@ -86,9 +110,9 @@ main() {
         exit 1
     fi
 
-    # Confirm to create the directory
     confirm "Create a directory for rpi-metrics in /usr/share?"
 
+    log_info "Creating directory for rpi-metrics..."
     # Create a directory for rpi-metrics
     if sudo mkdir -p /usr/share/rpi-metrics && cd /usr/share/rpi-metrics; then
         log_success "Directory for rpi-metrics created in /usr/share."
@@ -97,9 +121,9 @@ main() {
         exit 1
     fi
 
-    # Confirm to set up a virtual environment
     confirm "Set up a virtual environment in /usr/share/rpi-metrics?"
 
+    log_info "Setting up virtual environment..."
     # Set up a virtual environment and activate it
     if sudo python3 -m venv venv && source venv/bin/activate; then
         log_success "Virtual environment set up and activated in /usr/share/rpi-metrics."
@@ -108,9 +132,9 @@ main() {
         exit 1
     fi
 
-    # Confirm to install Flask
     confirm "Install Flask in the virtual environment?"
 
+    log_info "Installing Flask in the virtual environment..."
     # Install Flask
     if sudo venv/bin/pip install Flask; then
         log_success "Flask installed in the virtual environment."
@@ -119,13 +143,13 @@ main() {
         exit 1
     fi
 
-    # Confirm to download the server file
     confirm "Download the RPi-Metrics server file from GitHub?"
 
+    log_info "Downloading the RPi-Metrics server file from GitHub..."
     # Download the rpi-metrics server file
     http_status=$(sudo curl -L -w "%{http_code}" -o rpi_metrics.py -s https://qincai.xyz/rpi-metrics-server.py)
 
-    if [ "$http_status" -eq 200 ] || [ "$http_status" -eq 301 ]; then
+    if [ "$http_status" -eq 200 ] || [ "$http_status" -eq 301]; then
         log_success "rpi-metrics server file downloaded successfully."
     elif [ "$http_status" -eq 404 ]; then
         log_failure "Failed to download rpi-metrics server file: 404 Not Found."
@@ -135,9 +159,9 @@ main() {
         exit 1
     fi
 
-    # Confirm to deactivate the virtual environment
     confirm "Deactivate the virtual environment?"
 
+    log_info "Deactivating the virtual environment..."
     # Deactivate the virtual environment
     if deactivate; then
         log_success "Virtual environment deactivated."
@@ -146,15 +170,15 @@ main() {
         exit 1
     fi
 
-    # Confirm to download the systemd service file
     confirm "Download the systemd service file for rpi-metrics from GitHub?"
 
+    log_info "Downloading the systemd service file for rpi-metrics from GitHub..."
     # Download the systemd service file
     http_status=$(sudo curl -L -w "%{http_code}" -o /etc/systemd/system/rpi-metricsd.service -s https://qincai.xyz/rpi-metrics.service)
 
-    if [ "$http_status" -eq 200 ] || [ "$http_status" -eq 301 ]; then
+    if [ "$http_status" -eq 200] || [ "$http_status" -eq 301]; then
         log_success "Systemd service file downloaded successfully."
-    elif [ "$http_status" -eq 404 ]; then
+    elif [ "$http_status" -eq 404]; then
         log_failure "Failed to download systemd service file: 404 Not Found."
         exit 1
     else
@@ -162,6 +186,7 @@ main() {
         exit 1
     fi
 
+    log_info "Reloading systemd daemon..."
     # Reload systemd daemon
     if sudo systemctl daemon-reload; then
         log_success "Systemd daemon reloaded."
@@ -170,9 +195,9 @@ main() {
         exit 1
     fi
 
-    # Confirm to start and enable the service
     confirm "Start and enable the rpi-metricsd service?"
 
+    log_info "Starting and enabling the rpi-metricsd service..."
     # Start and enable the rpi-metricsd service
     if sudo systemctl start rpi-metricsd && sudo systemctl enable rpi-metricsd; then
         log_success "rpi-metricsd service started and enabled."
@@ -181,7 +206,7 @@ main() {
         exit 1
     fi
 
-    echo "RPi Metrics installation completed!"
+    echo -e "${GREEN}RPi Metrics installation completed!${NC}"
 }
 
 # Call the main function
