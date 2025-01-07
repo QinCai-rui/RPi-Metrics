@@ -134,7 +134,7 @@ check_vcgencmd() {
 main() {
     clear
     echo "Welcome to the RPi Metrics installation script!"
-    sleep 2
+    sleep 1
     echo -e "${CYAN}  _____   _____  _   __  __        _          _            "
     echo -e "${CYAN} |  __ \ |  __ \(_) |  \/  |      | |        (_)           "
     echo -e "${CYAN} | |__) || |__) |_  | \  / |  ___ | |_  _ __  _   ___  ___ "
@@ -142,7 +142,7 @@ main() {
     echo -e "${CYAN} | | \ \ | |    | | | |  | ||  __/| |_ | |   | || (__ \__ \\"
     echo -e "${CYAN} |_|  \_\|_|    |_| |_|  |_| \___| \__||_|   |_| \___||___/"
     echo ""
-    sleep 2.5
+    sleep 1
     echo -e "${NC}Make sure that you have downloaded this script from a trustworthy source!!"
     echo ""
     sleep 1
@@ -155,7 +155,7 @@ main() {
     echo "#   \$ sudo ./rpi-metrics-installer.sh                   #"
     echo "#########################################################"
     echo ""
-    sleep 1
+    sleep 2
 
     check_root
     sleep 1
@@ -174,7 +174,6 @@ main() {
         log_success "Package list updated and necessary packages installed."
     else
         log_failure "Failed to update package list or install necessary packages."
-        exit 1
     fi
 
     check_vcgencmd
@@ -190,68 +189,34 @@ main() {
         exit 1
     fi
 
-    confirm "Set up a virtual environment in /usr/share/rpi-metrics?"
+    confirm "Clone the RPi-Metrics repository?"
 
-    log_info "Setting up virtual environment..."
-    # Set up a virtual environment and activate it
-    if sudo python3 -m venv venv && source venv/bin/activate; then
-        log_success "Virtual environment set up and activated in /usr/share/rpi-metrics."
+    log_info "Cloning the RPi-Metrics repository..."
+    sleep 1
+    # Clone the repository
+    if sudo git clone https://qincai.xyz/rpi-metrics.git /usr/share/rpi-metrics; then
+        log_success "RPi-Metrics server repository cloned successfully."
     else
-        log_failure "Failed to set up virtual environment."
+        log_failure "Failed to clone RPi-Metrics server repository."
         exit 1
     fi
 
-    confirm "Install Flask in the virtual environment?"
+    log_info "Setting up the Flask application..."
+    cd /usr/share/rpi-metrics/Server
+    sudo python3 -m venv venv
+    source venv/bin/activate
+    sudo venv/bin/pip install Flask
+    deactivate
+    log_success "Flask application set up successfully."
 
-    log_info "Installing Flask in the virtual environment..."
-    # Install Flask
-    if sudo venv/bin/pip install Flask; then
-        log_success "Flask installed in the virtual environment."
+    confirm "Copy the systemd service file?"
+
+    log_info "Copying the systemd service file..."
+    # Copy the systemd service file
+    if sudo cp /usr/share/rpi-metrics/Server/rpi-metricsd.service /etc/systemd/system/; then
+        log_success "Systemd service file copied successfully."
     else
-        log_failure "Failed to install Flask."
-        exit 1
-    fi
-
-    confirm "Download the RPi-Metrics server file from GitHub?"
-
-    log_info "Downloading the RPi-Metrics server file from GitHub..."
-    # Download the rpi-metrics server file
-    http_status=$(sudo curl -L -w "%{http_code}" -o rpi_metrics.py -s https://qincai.xyz/rpi-metrics-server.py)
-
-    if [ "$http_status" -eq 200 ] || [ "$http_status" -eq 301 ]; then
-        log_success "rpi-metrics server file downloaded successfully."
-    elif [ "$http_status" -eq 404 ]; then
-        log_failure "Failed to download rpi-metrics server file: 404 Not Found."
-        exit 1
-    else
-        log_failure "Failed to download rpi-metrics server file: HTTP status code $http_status."
-        exit 1
-    fi
-
-    confirm "Deactivate the virtual environment?"
-
-    log_info "Deactivating the virtual environment..."
-    # Deactivate the virtual environment
-    if deactivate; then
-        log_success "Virtual environment deactivated."
-    else
-        log_failure "Failed to deactivate the virtual environment."
-        exit 1
-    fi
-
-    confirm "Download the systemd service file for rpi-metrics from GitHub?"
-
-    log_info "Downloading the systemd service file for rpi-metrics from GitHub..."
-    # Download the systemd service file
-    http_status=$(sudo curl -L -w "%{http_code}" -o /etc/systemd/system/rpi-metricsd.service -s https://qincai.xyz/rpi-metrics.service)
-
-    if [ "$http_status" -eq 200 ] || [ "$http_status" -eq 301 ]; then
-        log_success "Systemd service file downloaded successfully."
-    elif [ "$http_status" -eq 404 ]; then
-        log_failure "Failed to download systemd service file: 404 Not Found."
-        exit 1
-    else
-        log_failure "Failed to download systemd service file: HTTP status code $http_status."
+        log_failure "Failed to copy systemd service file."
         exit 1
     fi
 
@@ -261,7 +226,6 @@ main() {
         log_success "Systemd daemon reloaded."
     else
         log_failure "Failed to reload systemd daemon."
-        exit 1
     fi
 
     confirm "Start and enable the rpi-metricsd service?"
@@ -277,5 +241,6 @@ main() {
 
     echo -e "${GREEN}RPi Metrics installation completed!${NC}"
 }
+
 
 main "$@"
