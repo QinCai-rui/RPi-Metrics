@@ -124,9 +124,12 @@ check_vcgencmd() {
         echo 'SUBSYSTEM=="vchiq", GROUP="video", MODE="0660"' | sudo tee /etc/udev/rules.d/99-input.rules
         sudo udevadm control --reload-rules && sudo udevadm trigger
         log_success "Udev rules set up."
-
-        log_success "vcgencmd installed!"
-    else:
+        if ! command -v vcgencmd &> /dev/null; then
+            log_failure "FATAL: vcgencmd not found!!!"
+        else
+            log_success "vcgencmd installed!"
+        fi
+    else
         log_success "vcgencmd is already installed."
     fi
 }
