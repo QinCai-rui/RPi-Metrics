@@ -75,10 +75,59 @@ check_curl() {
     if ! command -v curl &> /dev/null; then
         log_failure "curl could not be found."
         confirm "Install curl?"
-        sudo apt update && sudo apt install -y curl
+        sudo apt-get update && sudo apt-get install -y curl
         log_success "curl installed!"
     else
         log_success "curl is already installed."
+    fi
+}
+
+check_vcgencmd() {
+    log_info "Checking installation of vcgencmd..."
+    if ! command -v vcgencmd &> /dev/null; then
+        log_failure "vcgencmd could not be found."
+        confirm "Install vcgencmd and other packages?"
+
+        log_info "Installing compilers..."
+        sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+        log_success "Compilers installed."
+
+        log_info "Downloading Userland..."
+        cd /tmp
+        git clone https://github.com/raspberrypi/userland.git
+        cd userland
+        log_success "Downloaded Userland."
+
+        log_info "Building from source... This might take a while."
+        ./buildme --aarch64
+        log_success "Build complete!"
+
+        log_info "Performing some housekeeping..."
+        sudo mv build/host_applications/linux/apps/gencmd/gencmd /usr/local/bin/vcgencmd
+        sudo chown root:video /usr/local/bin/vcgencmd
+        sudo chmod 775 /usr/local/bin/vcgencmd
+        sudo mv build/lib/libvchiq_arm.so build/lib/libvcos.so /lib/
+        log_success "Housekeeping done."
+
+        read -r -p "Enter the username to add to the video group (your username): " username
+        if id "$username" &>/dev/null; then
+            log_info "Adding users to the video group..."
+            sudo usermod -aG video "$username"
+            sudo usermod -aG video root
+            log_success "Users added to the video group."
+        else
+            log_failure "User $username does not exist."
+            exit 1
+        fi
+
+        log_info "Setting up udev rules..."
+        echo 'SUBSYSTEM=="vchiq", GROUP="video", MODE="0660"' | sudo tee /etc/udev/rules.d/99-input.rules
+        sudo udevadm control --reload-rules && sudo udevadm trigger
+        log_success "Udev rules set up."
+
+        log_success "vcgencmd installed!"
+    else:
+        log_success "vcgencmd is already installed."
     fi
 }
 
@@ -114,12 +163,14 @@ main() {
 
     log_info "Updating package list and installing necessary packages..."
     # Update package list and install necessary packages
-    if sudo apt update && sudo apt install -y python3 python3-pip python3-venv; then
+    if sudo apt-get update && sudo apt-get install -y python3 python3-pip python3-venv; then
         log_success "Package list updated and necessary packages installed."
     else
         log_failure "Failed to update package list or install necessary packages."
         exit 1
     fi
+
+    check_vcgencmd
 
     confirm "Create a directory for rpi-metrics in /usr/share?"
 
