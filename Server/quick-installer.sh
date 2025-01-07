@@ -208,7 +208,7 @@ main() {
     sudo python3 -m venv venv
     source venv/bin/activate
     sudo venv/bin/pip install Flask
-    deactivate
+    #deactivate
     log_success "Flask application set up successfully."
 
     confirm "Copy the systemd service file?"
