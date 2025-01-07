@@ -196,8 +196,7 @@ main() {
 
     log_info "Cloning the RPi-Metrics repository..."
     # Clone the repository
-    git config --global http.followRedirects true
-    if sudo git clone https://qincai.xyz/rpi-metrics.git /usr/share/rpi-metrics; then
+    if sudo git clone https://github.com/QinCai-rui/RPi-Metrics.git /usr/share/rpi-metrics; then
         log_success "RPi-Metrics server repository cloned successfully."
     else
         log_failure "Failed to clone RPi-Metrics server repository."
