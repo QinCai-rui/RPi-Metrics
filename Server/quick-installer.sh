@@ -115,7 +115,7 @@ check_vcgencmd() {
         log_success "Build complete!"
 
         log_info "Performing some housekeeping..."
-        sudo mv build/host_applications/linux/apps/gencmd/gencmd /usr/local/bin/vcgencmd
+        sudo mv build/bin/vcgencmd /usr/local/bin/vcgencmd
         sudo chown root:video /usr/local/bin/vcgencmd
         sudo chmod 775 /usr/local/bin/vcgencmd
         sudo mv build/lib/libvchiq_arm.so build/lib/libvcos.so /lib/
@@ -128,8 +128,8 @@ check_vcgencmd() {
             sudo usermod -aG video root
             log_success "Users added to the video group."
         else
-            log_failure "User $username does not exist."
-            exit 1
+            log_warning "User $username does not exist. Adding root instead..."
+            sudo usermod -aG video root
         fi
 
         log_info "Setting up udev rules..."
