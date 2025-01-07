@@ -188,7 +188,7 @@ main() {
 
     log_info "Updating package list and installing necessary packages..."
     # Update package list and install necessary packages
-    if sudo apt-get update && sudo apt-get install -y python3 python3-pip python3-venv; then
+    if sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install -y python3 python3-pip python3-venv; then
         log_success "Package list updated and necessary packages installed."
     else
         log_failure "Failed to update package list or install necessary packages."
