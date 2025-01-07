@@ -121,16 +121,9 @@ check_vcgencmd() {
         sudo mv build/lib/libvchiq_arm.so build/lib/libvcos.so /lib/
         log_success "Housekeeping done."
 
-        read -r -p "Enter the username to add to the video group (your username): " username
-        if id "$username" &>/dev/null; then
-            log_info "Adding users to the video group..."
-            sudo usermod -aG video "$username"
-            sudo usermod -aG video root
-            log_success "Users added to the video group."
-        else
-            log_warning "User $username does not exist. Adding root instead..."
-            sudo usermod -aG video root
-        fi
+        log_info "Adding user to the video group..."
+        sudo usermod -aG video root
+        log_success "User added to the video group."
 
         log_info "Setting up udev rules..."
         echo 'SUBSYSTEM=="vchiq", GROUP="video", MODE="0660"' | sudo tee /etc/udev/rules.d/99-input.rules
