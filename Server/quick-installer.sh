@@ -210,7 +210,7 @@ main() {
     else
         log_failure "Failed to clone RPi-Metrics server repository."
         log_warning "If you have an older version of this program, make sure you have removed it before re-installing it!"
-        log_info "Run `curl -sL https://qincai.xyz/rpi-metrics-uninstaller.sh | sudo bash -s - --dry` to uninstall, if installed."
+        log_info "Run: $ curl -sL https://qincai.xyz/rpi-metrics-uninstaller.sh | sudo bash -s - --dry to uninstall, if installed."
         exit 1
     fi
 
