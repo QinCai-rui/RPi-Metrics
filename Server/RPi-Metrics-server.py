@@ -1,19 +1,22 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import datetime
 import subprocess
 
 app = Flask(__name__)
 
+# Function to get the current time
 def get_current_time():
     timeStr = datetime.datetime.now().strftime("%b %d %H:%M:%S")
     return timeStr
 
+# Function to get the IPv4 address
 def get_ipv4_addr():
     # Run `hostname -I` and capture output
     result = subprocess.run(["hostname", "-I"], stdout=subprocess.PIPE, text=True)
     ipaddr = result.stdout.strip()
     return ipaddr
 
+# Function to get CPU usage
 def get_cpu_usage():
     # Run the `top` command
     result = subprocess.run(["top", "-bn1"], stdout=subprocess.PIPE, text=True)
@@ -27,12 +30,14 @@ def get_cpu_usage():
             cpu_usage = user + system
             return f"{cpu_usage:.0f}%"
 
+# Function to get SoC temperature
 def get_soc_temp():
     # Run `vcgencmd measure_temp` and capture output
     result = subprocess.run(["vcgencmd", "measure_temp"], stdout=subprocess.PIPE, text=True)
     cpuTemp = result.stdout.strip().replace("temp=", "").replace("'C", "C")
     return cpuTemp
 
+# Function to get memory statistics
 def get_memory_stats():
     with open('/proc/meminfo', 'r') as meminfo:
         lines = meminfo.readlines()
@@ -57,7 +62,12 @@ def get_memory_stats():
 
 @app.route("/")
 def root():
-    # Root webpage
+    # Render the main HTML page
+    return render_template('index.html')
+
+@app.route("/api")
+def api():
+    # Collect system statistics and return as JSON
     time = get_current_time()
     ipv4 = get_ipv4_addr()
     cpu = get_cpu_usage()
@@ -78,4 +88,5 @@ def root():
     return jsonify(data)
 
 if __name__ == "__main__":
+    # Run the Flask app
     app.run(host='localhost', port=7070)

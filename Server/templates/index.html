@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Stats</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>System Statistics</h1>
+    <div id="stats">
+        <p>Current Time: <span id="current-time"></span></p>
+        <p>IP Address: <span id="ip-address"></span></p>
+        <p>CPU Usage: <span id="cpu-usage"></span></p>
+        <p>SoC Temperature: <span id="soc-temp"></span></p>
+        <p>Total RAM: <span id="total-ram"></span></p>
+        <p>Used RAM: <span id="used-ram"></span></p>
+        <p>Total Swap: <span id="total-swap"></span></p>
+        <p>Used Swap: <span id="used-swap"></span></p>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
