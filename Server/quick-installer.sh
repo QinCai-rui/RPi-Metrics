@@ -134,6 +134,7 @@ check_vcgencmd() {
 main() {
     clear
     echo "Welcome to the RPi Metrics installation script!"
+    sleep 2
     echo -e "${CYAN}  _____   _____  _   __  __        _          _            "
     echo -e "${CYAN} |  __ \ |  __ \(_) |  \/  |      | |        (_)           "
     echo -e "${CYAN} | |__) || |__) |_  | \  / |  ___ | |_  _ __  _   ___  ___ "
@@ -141,8 +142,10 @@ main() {
     echo -e "${CYAN} | | \ \ | |    | | | |  | ||  __/| |_ | |   | || (__ \__ \\"
     echo -e "${CYAN} |_|  \_\|_|    |_| |_|  |_| \___| \__||_|   |_| \___||___/"
     echo ""
+    sleep 2.5
     echo -e "${NC}Make sure that you have downloaded this script from a trustworthy source!!"
     echo ""
+    sleep 1
     echo -e "${BLUE}#########################################################"
     echo "#                   Not working??                       #"
     echo "#                                                       #"
@@ -152,12 +155,16 @@ main() {
     echo "#   \$ sudo ./rpi-metrics-installer.sh                   #"
     echo "#########################################################"
     echo ""
+    sleep 1
 
     check_root
+    sleep 1
 
     check_rpi
+    sleep 1
 
     check_curl
+    sleep 1
 
     confirm "Update your package list and install necessary packages?"
 
