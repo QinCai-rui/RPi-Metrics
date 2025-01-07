@@ -101,7 +101,7 @@ check_vcgencmd() {
         confirm "Install vcgencmd and other packages?"
 
         log_info "Installing compilers..."
-        sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+        sudo apt-get install -y cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
         log_success "Compilers installed."
 
         log_info "Downloading Userland..."
