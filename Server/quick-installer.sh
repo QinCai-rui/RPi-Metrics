@@ -133,6 +133,7 @@ check_vcgencmd() {
             log_failure "FATAL: vcgencmd not found!!!"
         else
             log_success "vcgencmd installed!"
+            sudo rm -rf /tmp/userland/
         fi
     else
         log_success "vcgencmd is already installed."
