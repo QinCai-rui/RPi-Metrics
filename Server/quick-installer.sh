@@ -196,7 +196,7 @@ main() {
 
     log_info "Cloning the RPi-Metrics repository..."
     # Clone the repository
-    if git -c http.followRedirects=true clone https://qincai.xyz/rpi-metrics.git /usr/share/rpi-metrics; then
+    if git -c http.followRedirects=true clone https://github.com/QinCai-rui/RPi-Metrics.git /usr/share/rpi-metrics; then
         log_success "RPi-Metrics server repository cloned successfully."
     else
         log_failure "Failed to clone RPi-Metrics server repository."
