@@ -82,6 +82,18 @@ check_curl() {
     fi
 }
 
+check_git() {
+    log_info "Checking for git..."
+    if ! command -v git &> /dev/null; then
+        log_failure "git could not be found."
+        confirm "Install git?"
+        sudo apt-get update && sudo apt-get install -y git
+        log_success "git installed!"
+    else
+        log_success "git is already installed."
+    fi
+}
+
 check_vcgencmd() {
     log_info "Checking installation of vcgencmd..."
     if ! command -v vcgencmd &> /dev/null; then
@@ -164,6 +176,9 @@ main() {
     sleep 1
 
     check_rpi
+    sleep 1
+
+    check_git
     sleep 1
 
     check_curl
