@@ -253,6 +253,9 @@ main() {
     fi
 
     echo -e "${GREEN}RPi Metrics installation completed!${NC}"
+
+    echo "By default, the server listens on http://localhost:7070"
+    echo "http://localhost:7070 is a user-friendly frontend, while http://localhost:7070/api returns json and is the one to be used in scripts."
 }
 
 
