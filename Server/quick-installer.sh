@@ -132,8 +132,8 @@ check_vcgencmd() {
         if ! command -v vcgencmd &> /dev/null; then
             log_failure "FATAL: vcgencmd not found!!!"
         else
-            log_success "vcgencmd installed!"
             sudo rm -rf /tmp/userland/
+            log_success "vcgencmd installed!"
         fi
     else
         log_success "vcgencmd is already installed."
