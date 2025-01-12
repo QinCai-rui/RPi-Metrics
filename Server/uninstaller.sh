@@ -1,16 +1,16 @@
 #!/bin/bash
 # Uninstallation script for RPi Metrics
-# Created with love by QinCai with assistance from Copilot
+# Created with love by QinCai with assistance from Copilot (the colours)
 # This script provides two options for uninstallation:
 # --dry: Standard uninstallation without removing Python packages.
 # --wet: Full uninstallation including removal of Python packages.
 
 set -e
 
-# Colors for output
+# Colours for output
 GREEN='\033[0;32m'
 RED='\033[0;31m'
-NC='\033[0m' # No Color
+NC='\033[0m' # No Colour
 
 REMOVE_PYTHON_PACKAGES=false
 
