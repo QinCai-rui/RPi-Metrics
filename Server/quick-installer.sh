@@ -56,7 +56,7 @@ log_warning() {
 
 check_root() { 
     log_info "Checking for root privileges..." 
-    sleep 0.5
+    sleep 0.25
     if [ "$NO_CHECK_ROOT" = true ]; then 
         log_warning "Skipping root check due to --no-check-root flag." 
         return 0 
@@ -72,7 +72,7 @@ check_root() {
 
 check_rpi() {
     log_info "Checking if running on a Raspberry Pi..."
-    sleep 0.5
+    sleep 0.25
     if grep -q "Raspberry Pi" /proc/cpuinfo; then
         log_success "Running on a Raspberry Pi."
     else
@@ -83,7 +83,7 @@ check_rpi() {
 
 check_curl() {
     log_info "Checking for curl..."
-    sleep 0.5
+    sleep 0.25
     if ! command -v curl &> /dev/null; then
         log_failure "curl could not be found."
         confirm "Install curl?"
@@ -96,7 +96,7 @@ check_curl() {
 
 check_git() {
     log_info "Checking for git..."
-    sleep 0.5
+    sleep 0.25
     if ! command -v git &> /dev/null; then
         log_failure "git could not be found."
         confirm "Install git?"
@@ -109,7 +109,7 @@ check_git() {
 
 check_vcgencmd() {
     log_info "Checking installation of vcgencmd..."
-    sleep 0.5
+    sleep 0.25
     if ! command -v vcgencmd &> /dev/null; then
         log_failure "vcgencmd could not be found."
         confirm "Install vcgencmd and other packages?"
@@ -157,7 +157,7 @@ check_vcgencmd() {
 main() {
     clear
     echo "Welcome to the RPi Metrics installation script!"
-    sleep 0.75
+    sleep 0.5
     echo -e "${CYAN}  _____   _____  _   __  __        _          _            "
     sleep 0.05
     echo -e "${CYAN} |  __ \ |  __ \(_) |  \/  |      | |        (_)           "
@@ -183,23 +183,22 @@ main() {
     echo "#   \$ sudo ./rpi-metrics-installer.sh                   #"
     echo "#########################################################"
     echo ""
-    sleep 2
+    sleep 1
 
     check_root
     echo
-    sleep 1
+    sleep 0.75
 
     check_rpi
     echo
-    sleep 1
+    sleep 0.75
 
     check_git
     echo
-    sleep 1
+    sleep 0.75
 
     check_curl
     echo
-    sleep 1
 
     confirm "Update your package list and install necessary packages?"
 
