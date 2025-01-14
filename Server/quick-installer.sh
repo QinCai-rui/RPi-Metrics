@@ -285,7 +285,7 @@ EOL
         log_failure "Failed to reload systemd daemon."
     fi
 
-    confirm "Start and enable the rpi-metricsd service?"
+    mandatory_confirm "Start and enable the rpi-metricsd service?"
 
     log_info "Starting and enabling the rpi-metricsd service..."
     # Start and enable the rpi-metricsd service
