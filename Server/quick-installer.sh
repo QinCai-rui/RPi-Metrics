@@ -267,6 +267,9 @@ EOL
     sudo chown -R $USER:$USER /usr/share/rpi-metrics/Server
     log_success "Permissions set."
 
+    # Enable and start the server daemon
+    sudo systemctl enable --now rpi-metricsd
+
     # Inform the user about starting the Flask app
     log_success "RPi Metrics installation completed!"
 
