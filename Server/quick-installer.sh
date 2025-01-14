@@ -278,7 +278,7 @@ EOL
 
     echo -e "${BLUE}Modify the .env file in the server directory (/usr/share/rpi-metrics/Server) with the following content:"
     echo -e "${MAGENTA}API_KEY = \"your_api_key_here\"${NC}"
-    log_info "You can use nano, like so: `sudo nano /usr/share/rpi-metrics/Server/env.py`"
+    log_info "You can use nano, like so: sudo nano /usr/share/rpi-metrics/Server/env.py"
     echo ""
 
     echo -e "${BLUE}Available API Endpoints:${NC}"
