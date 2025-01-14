@@ -327,7 +327,7 @@ EOL
     echo -e "${CYAN}   - Method: POST${NC}"
     echo -e "${CYAN}   - Description: Shut down the system (requires API key in the header).${NC}"
 
-    echo -e "${MAGENTA}/api/plain${NC}"
+    echo -e "${MAGENTA}/api/all${NC}"
     echo -e "${CYAN}   - Method: GET${NC}"
     echo -e "${CYAN}   - Description: Retrieve comprehensive system statistics.${NC}"
     echo ""

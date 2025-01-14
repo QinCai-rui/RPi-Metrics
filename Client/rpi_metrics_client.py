@@ -9,7 +9,7 @@ import env
 SSID = env.SSID
 PASSWORD = env.PSK
 
-SERVER_URL = f"{env.SERVER_URL}/api/plain"
+SERVER_URL = f"{env.SERVER_URL}/api/all"
 SHUTDOWN_URL = f"{env.SERVER_URL}/api/shutdown"
 TIME_INTERVAL = 1   # Wait time between requests
 API_KEY = env.API_KEY  # Store your API key in the env.py file

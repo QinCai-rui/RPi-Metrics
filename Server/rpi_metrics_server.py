@@ -101,7 +101,7 @@ def api_shutdown():
         return jsonify({"message": "System shutting down"}), 200
     return jsonify({"error": "Unauthorized"}), 401
 
-@app.route("/api/plain", methods=['GET'])
+@app.route("/api/all", methods=['GET'])
 def api_plain():
     """Collect system statistics and return as JSON (original endpoint /api)"""
     time = get_current_time()
