@@ -38,7 +38,7 @@ confirm() {
     read -r -p "$1 [y/n]: " yn
     case $yn in
         [Yy]* ) return 0;;
-        [Nn]* ) echo -e "${YELLOW}Skipping...${NC}";;
+        [Nn]* ) echo -e "${YELLOW}Skipping...${NC}"; return 0;;
         * ) echo -e "${YELLOW}Please answer yes or no.${NC}";;
     esac
 
