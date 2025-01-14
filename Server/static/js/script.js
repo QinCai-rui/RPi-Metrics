@@ -1,6 +1,6 @@
 // JS created with help from Microsoft Copilot
 window.onload = function() {
-    fetch('/api')
+    fetch('/api/plain')
         .then(response => response.json())
         .then(data => {
             document.getElementById('current-time').textContent = data['Current Time'];
