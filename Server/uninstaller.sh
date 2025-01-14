@@ -2,8 +2,8 @@
 # Uninstallation script for RPi Metrics
 # Created with love by QinCai with assistance from Copilot (the colours)
 # This script provides two options for uninstallation:
-# --dry: Standard uninstallation without removing Python packages.
-# --wet: Full uninstallation including removal of Python packages.
+# --wet: Standard uninstallation without removing Python packages.
+# --extra-wet: Full uninstallation including removal of Python packages.
 
 set -e
 
@@ -30,7 +30,24 @@ check_root() {
 }
 
 main() {
+    clear
     echo "Starting RPi Metrics uninstallation..."
+    sleep 0.5
+    echo -e "${CYAN}  _____   _____  _   __  __        _          _            "
+    sleep 0.05
+    echo -e "${CYAN} |  __ \ |  __ \(_) |  \/  |      | |        (_)           "
+    sleep 0.05
+    echo -e "${CYAN} | |__) || |__) |_  | \  / |  ___ | |_  _ __  _   ___  ___ "
+    sleep 0.05
+    echo -e "${CYAN} |  _  / |  ___/| | | |\/| | / _ \| __|| '__|| | / __|/ __|"
+    sleep 0.05
+    echo -e "${CYAN} | | \ \ | |    | | | |  | ||  __/| |_ | |   | || (__ \__ \\"
+    sleep 0.05
+    echo -e "${CYAN} |_|  \_\|_|    |_| |_|  |_| \___| \__||_|   |_| \___||___/"
+    echo ""
+    sleep 1
+    echo -e "${NC}Make sure that you have downloaded this script from a trustworthy source!!"
+    echo ""
 
     # Check for root privileges
     check_root
@@ -75,15 +92,15 @@ main() {
 }
 
 # Check for --dry or --wet argument
-if [ "$1" = "--wet" ]; then
+if [ "$1" = "--extra-wet" ]; then
     REMOVE_PYTHON_PACKAGES=true
-elif [ "$1" = "--dry" ]; then
+elif [ "$1" = "--wet" ]; then
     REMOVE_PYTHON_PACKAGES=false
 else
-    echo "Usage: $0 --dry | --wet"
-    echo "--dry: Standard uninstallation without removing Python packages."
-    echo "--wet: WARNING: USE WITH CARE!! Full uninstallation including removal of Python and Python packages."
-    echo "YOU HAVE BEEN WARNED: DO NOT USE THE --wet FLAG UNLESS YOU WANT TO REMOVE PYTHON FROM YOUR SYSTEM!!"
+    echo "Usage: $0 --wet | --extra-wet"
+    echo "--wet: Standard uninstallation without removing Python packages."
+    echo "--extra-wet: WARNING: USE WITH CARE!! Full uninstallation including removal of Python and Python packages."
+    echo "YOU HAVE BEEN WARNED: DO NOT USE THE --extra-wet FLAG UNLESS YOU WANT TO REMOVE PYTHON FROM YOUR SYSTEM!!"
     exit 1
 fi
 
