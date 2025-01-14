@@ -1,23 +1,27 @@
-from flask import Flask, jsonify, render_template
 import datetime
 import subprocess
+from flask import Flask, jsonify, request, render_template
+import env # env.py file
 
 app = Flask(__name__)
 
-# Function to get the current time
-def get_current_time():
-    timeStr = datetime.datetime.now().strftime("%b %d %H:%M:%S")
-    return timeStr
+# Define your API key HERE
+API_KEY = env.API_KEY
 
-# Function to get the IPv4 address
+def get_current_time():
+    """Function to get the current time"""
+    time_str = datetime.datetime.now().strftime("%b %d %H:%M:%S")
+    return time_str
+
 def get_ipv4_addr():
+    """Function to get the IPv4 address"""
     # Run `hostname -I` and capture output
     result = subprocess.run(["hostname", "-I"], stdout=subprocess.PIPE, text=True)
-    ipaddr = result.stdout.strip()
-    return ipaddr
+    ip_addr = result.stdout.strip()
+    return ip_addr
 
-# Function to get CPU usage
 def get_cpu_usage():
+    """Function to get CPU usage"""
     # Run the `top` command
     result = subprocess.run(["top", "-bn1"], stdout=subprocess.PIPE, text=True)
     
@@ -30,15 +34,15 @@ def get_cpu_usage():
             cpu_usage = user + system
             return f"{cpu_usage:.0f}%"
 
-# Function to get SoC temperature
 def get_soc_temp():
+    """Function to get SoC temperature"""
     # Run `vcgencmd measure_temp` and capture output
     result = subprocess.run(["vcgencmd", "measure_temp"], stdout=subprocess.PIPE, text=True)
-    cpuTemp = result.stdout.strip().replace("temp=", "").replace("'C", "C")
-    return cpuTemp
+    cpu_temp = result.stdout.strip().replace("temp=", "").replace("'C", "C")
+    return cpu_temp
 
-# Function to get memory statistics
 def get_memory_stats():
+    """Function to get memory statistics"""
     with open('/proc/meminfo', 'r') as meminfo:
         lines = meminfo.readlines()
 
@@ -62,18 +66,50 @@ def get_memory_stats():
 
 @app.route("/")
 def root():
-    # Render the main HTML page
+    """Render the main HTML page"""
     return render_template('index.html')
 
-@app.route("/api")
-def api():
-    # Collect system statistics and return as JSON
+@app.route("/api/time", methods=['GET'])
+def api_time():
+    """Return the current time as JSON"""
+    time = get_current_time()
+    return jsonify({"Current Time": time})
+
+@app.route("/api/mem", methods=['GET'])
+def api_ip():
+    """Return the memory stats as JSON"""
+    total_ram, used_ram, total_swap, used_swap = get_memory_stats()
+    return jsonify({"Total RAM": f"{total_ram:.0f}MiB",
+                    "Used RAM": f"{used_ram:.0f}",
+                    "Total Swap": f"{total_swap:.0f}MiB",
+                    "Used Swap": f"{used_swap:.0f}"
+    })
+
+@app.route("/api/cpu", methods=['GET'])
+def api_cpu():
+    """Return the CPU usage as JSON"""
+    cpu = get_cpu_usage()
+    return jsonify({"CPU Usage": cpu})
+
+@app.route("/api/shutdown", methods=['POST'])
+def api_shutdown():
+    """Authenticate using API key"""
+    api_key = request.headers.get('x-api-key')
+    if api_key == API_KEY:
+        # Shut down the system
+        result = subprocess.run(["sudo", "shutdown", "now"], stdout=subprocess.PIPE, text=True)
+        return jsonify({"message": "System shutting down"}), 200
+    return jsonify({"error": "Unauthorized"}), 401
+
+@app.route("/api/plain", methods=['GET'])
+def api_plain():
+    """Collect system statistics and return as JSON (original endpoint /api)"""
     time = get_current_time()
     ipv4 = get_ipv4_addr()
     cpu = get_cpu_usage()
     temp = get_soc_temp()
     total_ram, used_ram, total_swap, used_swap = get_memory_stats()
-    
+
     data = {
         "Current Time": time,
         "IP Address": ipv4,
@@ -84,7 +120,7 @@ def api():
         "Total Swap": f"{total_swap:.0f}MiB",
         "Used Swap": f"{used_swap:.0f}"
     }
-    
+
     return jsonify(data)
 
 if __name__ == "__main__":
