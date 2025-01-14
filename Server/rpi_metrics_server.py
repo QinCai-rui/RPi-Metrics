@@ -97,7 +97,7 @@ def api_shutdown():
     api_key = request.headers.get('x-api-key')
     if api_key == API_KEY:
         # Shut down the system
-        result = subprocess.run(["sudo", "shutdown", "now"], stdout=subprocess.PIPE, text=True)
+        result = subprocess.run(["sudo", "shutdown", "+1"], stdout=subprocess.PIPE, text=True)
         return jsonify({"message": "System shutting down"}), 200
     return jsonify({"error": "Unauthorized"}), 401
 
