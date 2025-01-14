@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/usr/share/rpi-metrics
-ExecStart=/usr/share/rpi-metrics/Server/venv/bin/python /usr/share/rpi-metrics/Server/RPi-Metrics-server.py
+ExecStart=/usr/share/rpi-metrics/Server/venv/bin/python /usr/share/rpi-metrics/Server/rpi_metrics_server.py
 Restart=on-failure
 RestartSec=5s
 
