@@ -26,7 +26,7 @@ mandatory_confirm() {
     case $yn in
         [Yy]* ) return 0;;
         [Nn]* ) echo -e "${RED}Installation aborted.${NC}"; exit 1;;
-        * ) echo -e "${YELLOW}Please answer yes or no.${NC}";;
+        * ) echo -e "${YELLOW}Please answer yes or no. Defaulting to yes${NC}";;
     esac
 }
 
