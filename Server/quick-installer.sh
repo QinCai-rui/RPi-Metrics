@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 
 AUTO_CONFIRM=false
 
-confirm() {
+mandatory_confirm() {
     if [ "$AUTO_CONFIRM" = true ]; then
         return 0
     fi
@@ -28,6 +28,20 @@ confirm() {
         [Nn]* ) echo -e "${RED}Installation aborted.${NC}"; exit 1;;
         * ) echo -e "${YELLOW}Please answer yes or no.${NC}";;
     esac
+}
+
+confirm() {
+    if [ "$AUTO_CONFIRM" = true ]; then
+        return 0
+    fi
+
+    read -r -p "$1 [y/n]: " yn
+    case $yn in
+        [Yy]* ) return 0;;
+        [Nn]* ) echo -e "${YELLOW}Skipping...${NC}"; exit 1;;
+        * ) echo -e "${YELLOW}Please answer yes or no.${NC}";;
+    esac
+
 }
 
 if [ "$1" = "-y" ]; then
@@ -51,7 +65,7 @@ log_info() {
 }
 
 log_warning() {
-    echo -e "${MAGENTA}[⚠] $1${NC}"
+    echo -e "${YELLOW}[⚠] $1${NC}"
 }
 
 check_root() { 
@@ -86,7 +100,7 @@ check_curl() {
     sleep 0.25
     if ! command -v curl &> /dev/null; then
         log_failure "curl could not be found."
-        confirm "Install curl?"
+        mandatory_confirm "Install curl?"
         sudo apt-get update && sudo apt-get install -y curl
         log_success "curl installed!"
     else
@@ -99,7 +113,7 @@ check_git() {
     sleep 0.25
     if ! command -v git &> /dev/null; then
         log_failure "git could not be found."
-        confirm "Install git?"
+        mandatory_confirm "Install git?"
         sudo apt-get update && sudo apt-get install -y git
         log_success "git installed!"
     else
@@ -112,7 +126,7 @@ check_vcgencmd() {
     sleep 0.25
     if ! command -v vcgencmd &> /dev/null; then
         log_failure "vcgencmd could not be found."
-        confirm "Install vcgencmd and other packages?"
+        mandatory_confirm "Install vcgencmd and other packages?"
 
         log_info "Installing compilers..."
         sudo apt-get install -y cmake gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
@@ -212,7 +226,7 @@ main() {
 
     check_vcgencmd
 
-    confirm "Create a directory for rpi-metrics in /usr/share?"
+    mandatory_confirm "Create a directory for rpi-metrics in /usr/share?"
 
     log_info "Creating directory for rpi-metrics..."
     # Create a directory for rpi-metrics
@@ -223,7 +237,7 @@ main() {
         exit 1
     fi
 
-    confirm "Clone the RPi-Metrics repository?"
+    mandatory_confirm "Clone the RPi-Metrics repository?"
 
     log_info "Cloning the RPi-Metrics repository..."
     # Clone the repository
@@ -236,49 +250,73 @@ main() {
         exit 1
     fi
 
-    log_info "Setting up the Flask application..."
+    log_info "Setting up the Flask application environment..."
+
+    # Navigate to the server directory
     cd /usr/share/rpi-metrics/Server
+
+    # Create a virtual environment for the Flask app
+    log_info "Creating a Python virtual environment..."
     sudo python3 -m venv venv
+    log_success "Python virtual environment created."
+
+    # Activate the virtual environment
     source venv/bin/activate
+
+    # Install necessary Python packages
+    log_info "Installing required Python packages..."
     sudo venv/bin/pip install Flask
-    #deactivate
-    log_success "Flask application set up successfully."
+    log_success "Python packages installed."
 
-    confirm "Copy the systemd service file?"
+    # Create an env.py file with the necessary configuration
+    log_info "Creating env.py configuration file..."
+    sudo tee /usr/share/rpi-metrics/Server/env.py > /dev/null <<EOL
+API_KEY = "your_api_key_here"
+EOL
+    log_success "env.py configuration file created."
 
-    log_info "Copying the systemd service file..."
-    # Copy the systemd service file
-    if sudo cp /usr/share/rpi-metrics/Server/rpi-metricsd.service /etc/systemd/system/; then
-        log_success "Systemd service file copied successfully."
-    else
-        log_failure "Failed to copy systemd service file."
-        exit 1
-    fi
+    # Set permissions for the Flask application directory
+    log_info "Setting permissions for the Flask application directory..."
+    sudo chown -R $USER:$USER /usr/share/rpi-metrics/Server
+    log_success "Permissions set."
 
-    log_info "Reloading systemd daemon..."
-    # Reload systemd daemon
-    if sudo systemctl daemon-reload; then
-        log_success "Systemd daemon reloaded."
-    else
-        log_failure "Failed to reload systemd daemon."
-    fi
+    # Inform the user about starting the Flask app
+    log_success "RPi Metrics installation completed!"
 
-    confirm "Start and enable the rpi-metricsd service?"
+    log_info "To start the Flask server, follow these steps:"
+    echo -e "${BLUE}Start it as a systemd service:${NC}"
+    echo -e "${MAGENTA}   sudo systemctl start rpi-metricsd${NC}"
+    echo -e "${MAGENTA}   sudo systemctl enable rpi-metricsd${NC}"
+    echo ""
 
-    log_info "Starting and enabling the rpi-metricsd service..."
-    # Start and enable the rpi-metricsd service
-    if sudo systemctl start rpi-metricsd && sudo systemctl enable rpi-metricsd; then
-        log_success "rpi-metricsd service started and enabled."
-    else
-        log_failure "Failed to start or enable rpi-metricsd service."
-        exit 1
-    fi
+    echo -e "${BLUE}Modify the .env file in the server directory (/usr/share/rpi-metrics/Server) with the following content:"
+    echo -e "${MAGENTA}API_KEY = \"your_api_key_here\"${NC}"
+    log_info "You can use nano, like so: `sudo nano /usr/share/rpi-metrics/Server/env.py`"
+    echo ""
 
-    echo -e "${GREEN}RPi Metrics installation completed!${NC}"
+    echo -e "${BLUE}Available API Endpoints:${NC}"
+    echo -e "${MAGENTA}/api/time${NC}"
+    echo -e "${CYAN}   - Method: GET${NC}"
+    echo -e "${CYAN}   - Description: Retrieve the current system time.${NC}"
 
-    echo "By default, the server listens on http://localhost:7070"
-    echo "http://localhost:7070 is a user-friendly frontend, while http://localhost:7070/api returns json and is the one to be used in scripts."
+    echo -e "${MAGENTA}/api/mem${NC}"
+    echo -e "${CYAN}   - Method: GET${NC}"
+    echo -e "${CYAN}   - Description: Retrieve memory statistics.${NC}"
+
+    echo -e "${MAGENTA}/api/cpu${NC}"
+    echo -e "${CYAN}   - Method: GET${NC}"
+    echo -e "${CYAN}   - Description: Retrieve CPU usage.${NC}"
+
+    echo -e "${MAGENTA}/api/shutdown${NC}"
+    echo -e "${CYAN}   - Method: POST${NC}"
+    echo -e "${CYAN}   - Description: Shut down the system (requires API key in the header).${NC}"
+
+    echo -e "${MAGENTA}/api/plain${NC}"
+    echo -e "${CYAN}   - Method: GET${NC}"
+    echo -e "${CYAN}   - Description: Retrieve comprehensive system statistics.${NC}"
+    echo ""
+
+    echo "HAVE FUN!!!"
 }
-
 
 main "$@"
