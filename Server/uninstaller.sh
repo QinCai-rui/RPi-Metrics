@@ -56,8 +56,7 @@ main() {
     if sudo systemctl stop rpi-metricsd && sudo systemctl disable rpi-metricsd; then
         log_success "rpi-metricsd service stopped and disabled."
     else
-        log_failure "Failed to stop or disable rpi-metricsd service."
-        exit 1
+        log_failure "Failed to stop or disable rpi-metricsd service. SKIPPING..."
     fi
 
     # Remove the systemd service file
@@ -65,16 +64,14 @@ main() {
         sudo systemctl daemon-reload
         log_success "Systemd service file removed and daemon reloaded."
     else
-        log_failure "Failed to remove systemd service file."
-        exit 1
+        log_failure "Failed to remove systemd service file. SKIPPING"
     fi
 
     # Remove the directory
     if sudo rm -rf /usr/share/rpi-metrics; then
         log_success "Directory /usr/share/rpi-metrics removed."
     else
-        log_failure "Failed to remove /usr/share/rpi-metrics directory."
-        exit 1
+        log_failure "Failed to remove /usr/share/rpi-metrics directory. SKIPPING"
     fi
 
     # Optionally remove python3 and related packages if --wet is used
