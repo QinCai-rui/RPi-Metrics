@@ -148,7 +148,7 @@ _Example Output:_
 
 - **GET /**: Access the user-friendly GUI.
 _Example Output:_
-![root GUI output image]()
+![root GUI output image](https://cloud-khyybymq4-hack-club-bot.vercel.app/0image.png)
 
 ## Contributing
 
