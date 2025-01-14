@@ -233,7 +233,8 @@ main() {
     else
         log_failure "Failed to clone RPi-Metrics server repository."
         log_warning "If you have an older version of this program, make sure you have removed it before re-installing it!"
-        log_info "Run: curl -sL https://qincai.xyz/rpi-metrics-uninstaller.sh | sudo bash -s - --wet to uninstall, if installed."
+        log_info "Run this to uninstall, if installed:"
+        echo -e "${MAGENTA}   curl -sL https://qincai.xyz/rpi-metrics-uninstaller.sh | sudo bash -s - --wet${NC}"
         exit 1
     fi
 
@@ -267,21 +268,46 @@ EOL
     sudo chown -R $USER:$USER /usr/share/rpi-metrics/Server
     log_success "Permissions set."
 
-    # Enable and start the server daemon
-    sudo systemctl enable --now rpi-metricsd
+    log_info "Copying the systemd service file..."
+    # Copy the systemd service file
+    if sudo cp /usr/share/rpi-metrics/Server/rpi-metricsd.service /etc/systemd/system/; then
+        log_success "Systemd service file copied successfully."
+    else
+        log_failure "Failed to copy systemd service file."
+        exit 1
+    fi
+
+    log_info "Reloading systemd daemon..."
+    # Reload systemd daemon
+    if sudo systemctl daemon-reload; then
+        log_success "Systemd daemon reloaded."
+    else
+        log_failure "Failed to reload systemd daemon."
+    fi
+
+    confirm "Start and enable the rpi-metricsd service?"
+
+    log_info "Starting and enabling the rpi-metricsd service..."
+    # Start and enable the rpi-metricsd service
+    if sudo systemctl start rpi-metricsd && sudo systemctl enable rpi-metricsd; then
+        log_success "rpi-metricsd service started and enabled."
+    else
+        log_failure "Failed to start or enable rpi-metricsd service."
+        exit 1
+    fi
 
     # Inform the user about starting the Flask app
     log_success "RPi Metrics installation completed!"
 
-    log_info "To start the Flask server, follow these steps:"
-    echo -e "${BLUE}Start it as a systemd service:${NC}"
-    echo -e "${MAGENTA}   sudo systemctl start rpi-metricsd${NC}"
-    echo -e "${MAGENTA}   sudo systemctl enable rpi-metricsd${NC}"
+    log_info "The Flask server is set to automatically start on startup"
+    echo -e "${BLUE}To disable it, run:${NC}"
+    echo -e "${MAGENTA}   sudo systemctl disable rpi-metricsd${NC}"
     echo ""
 
     echo -e "${BLUE}Modify the .env file in the server directory (/usr/share/rpi-metrics/Server) with the following content:"
     echo -e "${MAGENTA}API_KEY = \"your_api_key_here\"${NC}"
-    log_info "You can use nano, like so: sudo nano /usr/share/rpi-metrics/Server/env.py"
+    log_info "You can use nano, like so: "
+    echo -e "${MAGENTA}   sudo nano /usr/share/rpi-metrics/Server/env.py${NC}"
     echo ""
 
     echo -e "${BLUE}Available API Endpoints:${NC}"
