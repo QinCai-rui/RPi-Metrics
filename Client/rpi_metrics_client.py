@@ -23,7 +23,6 @@ OLED = SSD1306_I2C(OLED_WIDTH, OLED_HEIGHT, i2c)
 # Define pins for buttons
 LEFT_BUTTON = Pin(0, Pin.IN, Pin.PULL_UP)
 RIGHT_BUTTON = Pin(11, Pin.IN, Pin.PULL_UP)
-DEBOUNCE_TIME = 200  # Debounce time in milliseconds
 
 def connect_wifi(ssid, password):
     wlan = network.WLAN(network.STA_IF)
@@ -52,6 +51,7 @@ def fetch_data():
             print(f"HTTP Error: {response.status_code} - {response.text}")
             OLED.fill(0)
             OLED.text(f"HTTP {response.status_code}", 0, 0)
+            OLED.text(response.text, 0, 12)
             OLED.show()
             return None
         return response.json()
@@ -93,6 +93,7 @@ def send_shutdown_request():
             print(f"Failed to send shutdown request: HTTP {response.status_code} - {response.text}")
             OLED.fill(0)
             OLED.text(f"FAILED: HTTP {response.status_code}", 0, 0)
+            OLED.text(response.text, 0, 12)
     except Exception as e:
         print(f"Error sending shutdown request: {e}")
         OLED.fill(0)
@@ -112,24 +113,12 @@ def display_data(data):
         OLED.text(f"VM: {data['Used Swap']}/{data['Total Swap']}", 0, 50)  # Swap
     elif response.status_code != 200:
         OLED.text(f"HTTP {response.status_code}", 0, 0)
+        OLED.text(response.text, 0, 12)
     else:
         OLED.text("Error while", 0, 0)
         OLED.text("fetching data", 0, 12)
     OLED.show()
     time.sleep(2)
-
-def debounce(pin):
-    """Debounce button press"""
-    current_time = time.ticks_ms()
-    if not hasattr(pin, 'last_pressed'):
-        pin.last_pressed = current_time
-        return True
-
-    if current_time - pin.last_pressed > DEBOUNCE_TIME:
-        pin.last_pressed = current_time
-        return True
-
-    return False
 
 def main():
     connect_wifi(SSID, PASSWORD)
@@ -137,18 +126,9 @@ def main():
         try:
             data = fetch_data()
             display_data(data)
-            if not LEFT_BUTTON.value() and debounce(LEFT_BUTTON):
-                OLED.fill(0)
-                OLED.text("Do you want to", 0, 0)
-                OLED.text("halt the server?", 0, 12)
-                OLED.text("L = NO   R = YES", 0, 50)
-                OLED.show()
-                while True:
-                    if not LEFT_BUTTON.value() and debounce(LEFT_BUTTON):
-                        break
-                    if not RIGHT_BUTTON.value() and debounce(RIGHT_BUTTON):
-                        send_shutdown_request()
-                        break
+            if (not LEFT_BUTTON.value()) and (not RIGHT_BUTTON.value()):
+                send_shutdown_request()
+                time.sleep(2)  # Add a delay to avoid multiple requests
         except Exception as e:
             print(f"Error in main loop: {e}")
             OLED.fill(0)
