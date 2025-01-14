@@ -30,19 +30,6 @@ mandatory_confirm() {
     esac
 }
 
-confirm() {
-    if [ "$AUTO_CONFIRM" = true ]; then
-        return 0
-    fi
-
-    read -r -p "$1 [y/n]: " yn
-    case $yn in
-        [Yy]* ) return 0;;
-        [Nn]* ) echo -e "${YELLOW}Skipping...${NC}"; return 0;;
-        * ) echo -e "${YELLOW}Please answer yes or no.${NC}";;
-    esac
-
-}
 
 if [ "$1" = "-y" ]; then
     AUTO_CONFIRM=true
@@ -214,7 +201,7 @@ main() {
     check_curl
     echo
 
-    confirm "Update your package list and install necessary packages?"
+    mandatory_confirmconfirm "Update your package list and install necessary packages?"
 
     log_info "Updating package list and installing necessary packages..."
     # Update package list and install necessary packages
