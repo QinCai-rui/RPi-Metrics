@@ -201,7 +201,7 @@ main() {
     check_curl
     echo
 
-    mandatory_confirmconfirm "Update your package list and install necessary packages?"
+    mandatory_confirm "Update your package list and install necessary packages?"
 
     log_info "Updating package list and installing necessary packages..."
     # Update package list and install necessary packages
