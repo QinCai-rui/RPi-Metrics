@@ -44,7 +44,7 @@ to bypass root check.
 ## Setting Up the Server
 
 > [!NOTE]
-> You can skip this if you used the [quick installer script](#quick-installation).
+> You can skip this if you used the [Quick Installer script](#quick-installation).
 
 1. **Clone this repository**
 
