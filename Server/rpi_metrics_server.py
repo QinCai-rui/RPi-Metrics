@@ -112,7 +112,7 @@ def api_update():
         print(r)
         r = subprocess.run(["sudo", "apt-get", "upgrade", "-y"], stdout=subprocess.PIPE, text=True)
         print(r)
-        return jsonify({"message": "System updating..."}), 200
+        return jsonify({"message": "System update complete!"}), 200
     return jsonify({"error": "Unauthorized"}), 401
 
 @app.route("/api/all", methods=['GET'])
