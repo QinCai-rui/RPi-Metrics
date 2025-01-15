@@ -79,20 +79,20 @@ def get_memory_stats():
     return total_ram, used_ram, total_swap, used_swap
 
 @app.route("/")
-@limiter.exempt  # Exempt the root endpoint from rate limiting
+@limiter.limit("1 per second")
 def root():
     """Render the main HTML page"""
     return render_template('index.html')
 
 @app.route("/api/time", methods=['GET'])
-@limiter.limit("10 per minute")
+@limiter.limit("15 per minute")
 def api_time():
     """Return the current time as JSON"""
     time = get_current_time()
     return jsonify({"Current Time": time})
 
 @app.route("/api/mem", methods=['GET'])
-@limiter.limit("10 per minute")
+@limiter.limit("15 per minute")
 def api_ip():
     """Return the memory stats as JSON"""
     total_ram, used_ram, total_swap, used_swap = get_memory_stats()
@@ -103,14 +103,14 @@ def api_ip():
     })
 
 @app.route("/api/cpu", methods=['GET'])
-@limiter.limit("10 per minute")
+@limiter.limit("15 per minute")
 def api_cpu():
     """Return the CPU usage as JSON"""
     cpu = get_cpu_usage()
     return jsonify({"CPU Usage": cpu})
 
 @app.route("/api/shutdown", methods=['POST'])
-@limiter.limit("10 per hour")
+@limiter.limit("5 per hour")
 def api_shutdown():
     """Authenticate using API key"""
     api_key = request.headers.get('x-api-key')
@@ -136,7 +136,7 @@ def api_update():
     return jsonify({"error": "Unauthorized"}), 401
 
 @app.route("/api/all", methods=['GET'])
-@limiter.limit("15 per minute")
+@limiter.limit("30 per minute")
 def api_plain():
     """Collect system statistics and return as JSON (original endpoint /api)"""
     time = get_current_time()
