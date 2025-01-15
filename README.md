@@ -1,11 +1,11 @@
 # RPi Metrics
 
-Welcome to the **RPi Metrics** project! This project allows you to monitor and manage your Raspberry Pi's system metrics such as CPU usage, memory usage, and more via a Flask server and a client application.
+Welcome to the **RPi Metrics** project! This project allows you to monitor and manage your Raspberry Pi's system metrics such as CPU usage, memory usage, and more via a Flask server and a client application (optional but highly recommended).
 
 ## Prerequisites
 
 Ensure you have the following installed on your Raspberry Pi:
-If you don't have everything, no worries! Just use the [installation script below](#installation)!
+If you don't have everything, no worries! Just use the [installation script below](#installation)! It will handle everything for you!
 
 - Python 3
 - Pip
