@@ -97,8 +97,22 @@ def api_shutdown():
     api_key = request.headers.get('x-api-key')
     if api_key == API_KEY:
         # Shut down the system
-        result = subprocess.run(["sudo", "shutdown", "+1"], stdout=subprocess.PIPE, text=True)
+        r = subprocess.run(["sudo", "shutdown", "+1"], stdout=subprocess.PIPE, text=True)
+        print(r)
         return jsonify({"message": "System shutting down"}), 200
+    return jsonify({"error": "Unauthorized"}), 401
+
+@app.route("/api/update", methods=['POST'])
+def api_update():
+    """Authenticate using API key"""
+    api_key = request.headers.get('x-api-key')
+    if api_key == API_KEY:
+        # Shut down the system
+        r = subprocess.run(["sudo", "apt-get", "update"], stdout=subprocess.PIPE, text=True)
+        print(r)
+        r = subprocess.run(["sudo", "apt-get", "upgrade", "-y"], stdout=subprocess.PIPE, text=True)
+        print(r)
+        return jsonify({"message": "System updating..."}), 200
     return jsonify({"error": "Unauthorized"}), 401
 
 @app.route("/api/all", methods=['GET'])

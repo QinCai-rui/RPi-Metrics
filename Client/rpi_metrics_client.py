@@ -11,8 +11,10 @@ PASSWORD = env.PSK
 
 SERVER_URL = f"{env.SERVER_URL}/api/all"
 SHUTDOWN_URL = f"{env.SERVER_URL}/api/shutdown"
+UPDATE_URL = f"{env.SERVER_URL}/api/update"
+
 TIME_INTERVAL = 0.5   # Wait time between requests
-API_KEY = env.API_KEY  # Store your API key in the env.py file
+API_KEY = env.API_KEY  # Store your API key in the env.py file. See README for more info
 
 # Initialise the display
 i2c = I2C(0, scl=Pin(17), sda=Pin(16))
@@ -102,6 +104,35 @@ def send_shutdown_request():
     finally:
         OLED.show()
 
+def send_update_request():
+    """Send update request to the Flask server with authentication"""
+    OLED.fill(0)
+    OLED.text("Sending update", 0, 0)
+    OLED.text("request...", 0, 12)
+    OLED.text("This might take", 0, 36)
+    OLED.text("a long time...", 0, 48)
+    OLED.show()
+    try:
+        headers = {'x-api-key': API_KEY}
+        response = requests.post(SHUTDOWN_URL, headers=headers)
+        if response.status_code == 200:
+            print("Update request sent successfully")
+            OLED.fill(0)
+            OLED.text("Server is", 0, 0)
+            OLED.text("updating...", 0, 12)
+        else:
+            print(f"Failed to send update request: HTTP {response.status_code} - {response.text}")
+            OLED.fill(0)
+            OLED.text(f"FAILED: HTTP {response.status_code}", 0, 0)
+            OLED.text(response.text, 0, 12)
+    except Exception as e:
+        print(f"Error sending update request: {e}")
+        OLED.fill(0)
+        OLED.text("Error occurred", 0, 0)
+        OLED.text("when sending req", 0 ,12)
+    finally:
+        OLED.show()
+
 def display_data(data):
     """Display data on the OLED screen"""
     OLED.fill(0)
@@ -126,9 +157,12 @@ def main():
         try:
             data = fetch_data()
             display_data(data)
-            if (not LEFT_BUTTON.value()) and (not RIGHT_BUTTON.value()):
+            if not LEFT_BUTTON.value():
                 send_shutdown_request()
                 time.sleep(2)  # Add a delay to avoid multiple requests
+            if not RIGHT_BUTTON.value():
+                send_update_request()
+                time.sleep(2)
         except Exception as e:
             print(f"Error in main loop: {e}")
             OLED.fill(0)
