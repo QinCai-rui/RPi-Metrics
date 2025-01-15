@@ -50,6 +50,7 @@ window.onload = function() {
                     alert('Wrong API key');
                     throw new Error('Unauthorized');
                 }
+                alert('This might take some time. Please hold on!')
                 return response.json();
             })
             .then(data => alert(data.message))
