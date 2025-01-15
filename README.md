@@ -2,7 +2,7 @@
 
 Welcome to the **RPi Metrics** project! This project allows you to monitor and manage your Raspberry Pi's system metrics such as CPU usage, memory usage, and more via a Flask server and a client application (optional but highly recommended).
 
-You can also **remote poweroff** and **remote update** your Pi, from anywhere in the world, provided that the server is reachable from the wider internet. (Check out <https://pi-monitor.qincai.xyz> to see it yourself!)
+You can also _**remote poweroff**_ and _**remote update**_ your Pi, from anywhere in the world, provided that the server is reachable from the wider internet. (Check out <https://pi-monitor.qincai.xyz> to see it yourself!)
 
 ## Prerequisites
 
