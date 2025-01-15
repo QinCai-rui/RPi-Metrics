@@ -114,7 +114,7 @@ def send_update_request():
     OLED.show()
     try:
         headers = {'x-api-key': API_KEY}
-        response = requests.post(SHUTDOWN_URL, headers=headers)
+        response = requests.post(UPDATE_URL, headers=headers)
         if response.status_code == 200:
             print("Update request sent successfully")
             OLED.fill(0)
