@@ -85,6 +85,7 @@ The client should be a Raspberry Pi Pico W or Pico 2 W with 2 buttons and an SSD
     SERVER_URL = "http://your_server_url"
     API_KEY = "your_api_key_here"
     ```
+
 2. **Download the client code to your Pi Pico.**
 The code is [here](https://github.com/QinCai-rui/RPi-Metrics/blob/main/Client/rpi_metrics_client.py).
 3. **Ensure your Raspberry Pi Pico is connected to the internet.**
@@ -102,6 +103,8 @@ _Example Output:_
     }
     ```
 
+<br>
+
 - **GET /api/mem**: Retrieve memory statistics.
 _Example Output:_
 
@@ -114,6 +117,8 @@ _Example Output:_
     }
     ```
 
+<br>
+
 - **GET /api/cpu**: Retrieve CPU usage.
 _Example Output:_
 
@@ -123,12 +128,31 @@ _Example Output:_
     }
     ```
 
-- **POST /api/shutdown**: Shut down the system (requires API key in the header).
-_Example Usage:_
+<br>
+
+- **POST /api/shutdown**: Shut down the system (requires API key in the header). Header name should be `x-api-key`. The server returns `HTTP 200` and the following if a valid API key is provided:
+
+    ```json
+    {
+        "message": "System shutting down"
+    }
+    ```
+
+    If a valid API key is not provided, the server returns `HTTP 401` and the following:
+
+    ```json
+    {
+        "error": "Unauthorized"
+    }   
+    ```
+
+    _Example Usage:_
 
     ```sh
     curl -X POST http://your_server_url/api/shutdown -H "x-api-key: your_api_key_here"
     ```
+
+<br>
 
 - **GET /api/all**: Retrieve comprehensive system statistics.
 _Example Output:_
@@ -145,6 +169,8 @@ _Example Output:_
       "Used Swap": "72"
     }
     ```
+
+<br>
 
 - **GET /**: Access the user-friendly GUI.
 _Example Output:_
