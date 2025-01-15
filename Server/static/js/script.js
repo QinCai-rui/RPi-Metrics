@@ -1,4 +1,3 @@
-// JS created with assistance from Microsoft Copilot
 window.onload = function() {
     fetch('/api/all')
         .then(response => response.json())
@@ -24,7 +23,13 @@ window.onload = function() {
                     'x-api-key': apiKey
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (response.status === 401) {
+                    alert('Wrong API key');
+                    throw new Error('Unauthorized');
+                }
+                return response.json();
+            })
             .then(data => alert(data.message))
             .catch(error => console.error('Error during shutdown:', error));
         }
@@ -40,7 +45,13 @@ window.onload = function() {
                     'x-api-key': apiKey
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (response.status === 401) {
+                    alert('Wrong API key');
+                    throw new Error('Unauthorized');
+                }
+                return response.json();
+            })
             .then(data => alert(data.message))
             .catch(error => console.error('Error during update:', error));
         }
