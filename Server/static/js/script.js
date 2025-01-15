@@ -1,4 +1,4 @@
-// JS created with help from Microsoft Copilot
+// JS created with assistance from Microsoft Copilot
 window.onload = function() {
     fetch('/api/all')
         .then(response => response.json())
@@ -13,4 +13,36 @@ window.onload = function() {
             document.getElementById('used-swap').textContent = data['Used Swap'];
         })
         .catch(error => console.error('Error fetching API data:', error));
+    
+    // Add event listener for the Shutdown button
+    document.getElementById('shutdown-btn').addEventListener('click', function() {
+        const apiKey = prompt('Please enter your API key:');
+        if (apiKey && confirm('Are you sure you want to shut down the system?')) {
+            fetch('/api/shutdown', {
+                method: 'POST',
+                headers: {
+                    'x-api-key': apiKey
+                }
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error('Error during shutdown:', error));
+        }
+    });
+
+    // Add event listener for the Update button
+    document.getElementById('update-btn').addEventListener('click', function() {
+        const apiKey = prompt('Please enter your API key:');
+        if (apiKey && confirm('Are you sure you want to update the system?')) {
+            fetch('/api/update', {
+                method: 'POST',
+                headers: {
+                    'x-api-key': apiKey
+                }
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error('Error during update:', error));
+        }
+    });
 };
