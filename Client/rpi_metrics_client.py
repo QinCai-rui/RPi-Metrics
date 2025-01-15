@@ -118,8 +118,8 @@ def send_update_request():
         if response.status_code == 200:
             print("Update request sent successfully")
             OLED.fill(0)
-            OLED.text("Server is", 0, 0)
-            OLED.text("updating...", 0, 12)
+            OLED.text("Server update", 0, 0)
+            OLED.text("done!", 0, 12)
         else:
             print(f"Failed to send update request: HTTP {response.status_code} - {response.text}")
             OLED.fill(0)
