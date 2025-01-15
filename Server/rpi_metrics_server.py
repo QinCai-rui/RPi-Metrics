@@ -19,7 +19,7 @@ def get_real_ip():
 limiter = Limiter(
     get_real_ip,
     app=app,
-    default_limits=["200 per day", "50 per hour"]
+    #default_limits=["200 per day", "50 per hour"]
 )
 
 def get_current_time():
