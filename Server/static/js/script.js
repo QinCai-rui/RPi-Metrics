@@ -39,6 +39,7 @@ window.onload = function() {
     document.getElementById('update-btn').addEventListener('click', function() {
         const apiKey = prompt('Please enter your API key:');
         if (apiKey && confirm('Are you sure you want to update the system?')) {
+            alert('This might take some time. Please hold on!');
             fetch('/api/update', {
                 method: 'POST',
                 headers: {
@@ -50,11 +51,10 @@ window.onload = function() {
                     alert('Wrong API key');
                     throw new Error('Unauthorized');
                 }
-                alert('This might take some time. Please hold on!')
                 return response.json();
             })
             .then(data => alert(data.message))
             .catch(error => console.error('Error during update:', error));
         }
-    });
+    });    
 };
