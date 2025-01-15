@@ -54,3 +54,4 @@ dmypy.json
 # Specific files and directories
 env*
 .env*
+venv/
