@@ -136,7 +136,7 @@ def api_update():
     return jsonify({"error": "Unauthorized"}), 401
 
 @app.route("/api/all", methods=['GET'])
-@limiter.limit("30 per minute")
+@limiter.limit("1 per 2 seconds")
 def api_plain():
     """Collect system statistics and return as JSON (original endpoint /api)"""
     time = get_current_time()
