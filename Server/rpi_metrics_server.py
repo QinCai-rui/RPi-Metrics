@@ -118,7 +118,7 @@ def api_shutdown():
         # Shut down the system
         r = subprocess.run(["sudo", "shutdown", "+1"], stdout=subprocess.PIPE, text=True)
         print(r)
-        return jsonify({"message": "System shutting down"}), 200
+        return jsonify({"message": "System shutting down in 1 minute"}), 200
     return jsonify({"error": "Unauthorized"}), 401
 
 @app.route("/api/update", methods=['POST'])
