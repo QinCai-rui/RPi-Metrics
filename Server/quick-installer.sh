@@ -254,6 +254,7 @@ main() {
     # Install necessary Python packages
     log_info "Installing required Python packages..."
     sudo venv/bin/pip install Flask
+    sudo venv/bin/pip install Flask-Limiter
     log_success "Python packages installed."
 
     # Create an env.py file with the necessary configuration
