@@ -1,12 +1,26 @@
+from flask import Flask, jsonify, request, render_template
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+import env  # env.py file
 import datetime
 import subprocess
-from flask import Flask, jsonify, request, render_template
-import env # env.py file
 
 app = Flask(__name__)
 
 # Define your API key HERE
 API_KEY = env.API_KEY
+
+def get_real_ip():
+    """Function to get the real IP address from Cloudflare headers (if applicable)"""
+    if request.headers.get('CF-Connecting-IP'):
+        return request.headers.get('CF-Connecting-IP')
+    return request.remote_addr
+
+limiter = Limiter(
+    get_real_ip,
+    app=app,
+    default_limits=["200 per day", "50 per hour"]
+)
 
 def get_current_time():
     """Function to get the current time"""
@@ -65,17 +79,20 @@ def get_memory_stats():
     return total_ram, used_ram, total_swap, used_swap
 
 @app.route("/")
+@limiter.exempt  # Exempt the root endpoint from rate limiting
 def root():
     """Render the main HTML page"""
     return render_template('index.html')
 
 @app.route("/api/time", methods=['GET'])
+@limiter.limit("10 per minute")
 def api_time():
     """Return the current time as JSON"""
     time = get_current_time()
     return jsonify({"Current Time": time})
 
 @app.route("/api/mem", methods=['GET'])
+@limiter.limit("10 per minute")
 def api_ip():
     """Return the memory stats as JSON"""
     total_ram, used_ram, total_swap, used_swap = get_memory_stats()
@@ -86,12 +103,14 @@ def api_ip():
     })
 
 @app.route("/api/cpu", methods=['GET'])
+@limiter.limit("10 per minute")
 def api_cpu():
     """Return the CPU usage as JSON"""
     cpu = get_cpu_usage()
     return jsonify({"CPU Usage": cpu})
 
 @app.route("/api/shutdown", methods=['POST'])
+@limiter.limit("10 per hour")
 def api_shutdown():
     """Authenticate using API key"""
     api_key = request.headers.get('x-api-key')
@@ -103,19 +122,21 @@ def api_shutdown():
     return jsonify({"error": "Unauthorized"}), 401
 
 @app.route("/api/update", methods=['POST'])
+@limiter.limit("3 per hour")
 def api_update():
     """Authenticate using API key"""
     api_key = request.headers.get('x-api-key')
     if api_key == API_KEY:
         # Shut down the system
         r = subprocess.run(["sudo", "apt-get", "update"], stdout=subprocess.PIPE, text=True)
-        print(r)
+        #print(r)
         r = subprocess.run(["sudo", "apt-get", "upgrade", "-y"], stdout=subprocess.PIPE, text=True)
-        print(r)
+        #print(r)
         return jsonify({"message": "System update complete!"}), 200
     return jsonify({"error": "Unauthorized"}), 401
 
 @app.route("/api/all", methods=['GET'])
+@limiter.limit("15 per minute")
 def api_plain():
     """Collect system statistics and return as JSON (original endpoint /api)"""
     time = get_current_time()
