@@ -2,17 +2,21 @@
 
 Welcome to the **RPi Metrics** project! This project allows you to monitor and manage your Raspberry Pi's system metrics such as CPU usage, memory usage, and more via a Flask server and a client application (optional but highly recommended).
 
+You can also **remote poweroff** and **remote update** your Pi, from anywhere in the world, provided that the server is reachable from the wider internet. (Check out <https://pi-monitor.qincai.xyz> to see it yourself!)
+
 ## Prerequisites
 
 Ensure you have the following installed on your Raspberry Pi:
-If you don't have everything, no worries! Just use the [installation script below](#installation)! It will handle everything for you!
+If you don't have everything, no worries! Just use the [installation script below](#quick-installation)! It will handle everything for you!
 
 - Python 3
 - Pip
 - Git
 - Curl
 
-## Installation
+**However, ensure that curl is already installed on your system before using the Quick Installer.**
+
+## Quick Installation
 
 Use the installation script by running:
 
@@ -40,7 +44,7 @@ to bypass root check.
 ## Setting Up the Server
 
 > [!NOTE]
-> You can skip this if you used the [quick installer script](#installation).
+> You can skip this if you used the [quick installer script](#quick-installation).
 
 1. **Clone this repository**
 
