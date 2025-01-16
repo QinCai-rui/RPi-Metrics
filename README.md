@@ -1,5 +1,21 @@
 # RPi Metrics
 
+<p align="center">
+  <img alt="Github top language" src="https://img.shields.io/github/languages/top/qincai-rui/rpi-metrics?color=56BEB8">
+
+  <img alt="Github language count" src="https://img.shields.io/github/languages/count/qincai-rui/rpi-metrics?color=56BEB8">
+
+  <img alt="Repository size" src="https://img.shields.io/github/repo-size/qincai-rui/rpi-metrics?color=56BEB8">
+
+  <img alt="License" src="https://img.shields.io/github/license/qincai-rui/rpi-metrics?color=56BEB8">
+
+  <!-- <img alt="Github issues" src="https://img.shields.io/github/issues/qincai-rui/rpi-metrics?color=56BEB8" /> -->
+
+  <!-- <img alt="Github forks" src="https://img.shields.io/github/forks/qincai-rui/rpi-metrics?color=56BEB8" /> -->
+
+  <!-- <img alt="Github stars" src="https://img.shields.io/github/stars/qincai-rui/rpi-metrics?color=56BEB8" /> -->
+</p>
+
 Welcome to the **RPi Metrics** project! This project allows you to monitor and manage your Raspberry Pi's system metrics such as CPU usage, memory usage, and more via a Flask server and a client application (optional but highly recommended).
 
 > [!TIP]
