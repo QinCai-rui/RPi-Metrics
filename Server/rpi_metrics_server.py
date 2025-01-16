@@ -18,7 +18,7 @@ def get_real_ip():
 
 def get_commit_info():
     """Read the commit information"""
-    result = subprocess.run(["bash", "/usr/share/rpi-metrics/Server/get_commit_info.sh"], stdout=subprocess.PIPE, text=True)
+    result = subprocess.run(["sudo", "bash", "/usr/share/rpi-metrics/Server/get_commit_info.sh"], stdout=subprocess.PIPE, text=True)
     global commit_id, commit_time
     with open('/usr/share/rpi-metrics/commit_info.txt') as f:
         lines = f.readlines()
@@ -125,7 +125,7 @@ def api_shutdown():
     api_key = request.headers.get('x-api-key')
     if api_key == API_KEY:
         # Shut down the system
-        r = subprocess.run(["shutdown", "+1"], stdout=subprocess.PIPE, text=True)
+        r = subprocess.run(["sudo", "shutdown", "+1"], stdout=subprocess.PIPE, text=True)
         print(r)
         return jsonify({"message": "System shutting down in 1 minute"}), 200
     return jsonify({"error": "Unauthorized"}), 401
@@ -137,9 +137,9 @@ def api_update():
     api_key = request.headers.get('x-api-key')
     if api_key == API_KEY:
         # Shut down the system
-        r = subprocess.run(["apt-get", "update"], stdout=subprocess.PIPE, text=True)
+        r = subprocess.run(["sudo", "apt-get", "update"], stdout=subprocess.PIPE, text=True)
         #print(r)
-        r = subprocess.run(["apt-get", "upgrade", "-y"], stdout=subprocess.PIPE, text=True)
+        r = subprocess.run(["sudo", "apt-get", "upgrade", "-y"], stdout=subprocess.PIPE, text=True)
         #print(r)
         return jsonify({"message": "System update complete!"}), 200
     return jsonify({"error": "Unauthorized"}), 401
