@@ -74,7 +74,6 @@ button:active {
 }
 
 footer {
-    background-color: #4CAF50;
     color: rgb(105, 105, 105);
     text-align: center;
     padding: 20px;
@@ -92,6 +91,6 @@ footer code {
 }
 
 .footer-text {
-    font-size: 12px;
+    font-size: 16px;
     color: #808080;
 }
