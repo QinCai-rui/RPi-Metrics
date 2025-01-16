@@ -79,10 +79,16 @@ def get_memory_stats():
     return total_ram, used_ram, total_swap, used_swap
 
 @app.route("/")
-@limiter.limit("1 per 2 seconds")
-def root():
-    """Render the main HTML page"""
-    return render_template('index.html')
+@limiter.limit("2 per 3 seconds")
+def index():
+    """Read the commit information and render the main HTML page"""
+    result = subprocess.run(["sudo", "bash", "/usr/share/rpi-metrics/Server/get_commit_info.sh"], stdout=subprocess.PIPE, text=True)
+    with open('/usr/share/rpi-metrics/commit_info.txt') as f:
+        lines = f.readlines()
+        commit_id = lines[0].strip().split(': ')[1]
+        commit_time = lines[1].strip().split(': ')[1]
+    
+    return render_template('index.html', commit_id=commit_id, commit_time=commit_time)
 
 @app.route("/api/time", methods=['GET'])
 @limiter.limit("15 per minute")
