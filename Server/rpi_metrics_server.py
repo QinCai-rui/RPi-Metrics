@@ -79,7 +79,7 @@ def get_memory_stats():
     return total_ram, used_ram, total_swap, used_swap
 
 @app.route("/")
-@limiter.limit("1 per second")
+@limiter.limit("1 per 2 seconds")
 def root():
     """Render the main HTML page"""
     return render_template('index.html')
