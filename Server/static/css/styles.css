@@ -29,20 +29,17 @@ h1 {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-p {
+#stats div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
     font-size: 18px;
-    margin: 10px 0;
     color: #333;
 }
 
-#stats p {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #dddddd;
-}
-
-#stats p:last-child {
+#stats div:last-child {
     border-bottom: none;
 }
 

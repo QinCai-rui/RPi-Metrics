@@ -9,14 +9,50 @@
 </head>
 <body>
     <h1>System Statistics Data</h1>
-    <p><em><strong>Scroll down please..</strong></em></p>
+    <p><em><strong>Scroll down please...</strong></em></p>
     <div id="stats">
-        <i class="bi bi-clock"></i><p>Current Time: <span id="current-time"></span></p>
-        <i class="bi bi-pci-card-network"></i><p>IP Address: <span id="ip-address"></span></p>
-        <i class="bi bi-cpu"></i><p>CPU Usage: <span id="cpu-usage"></span></p>
-        <i class="bi bi-thermometer-half"></i><p>SoC Temperature: <span id="soc-temp"></span></p>
-        <i class="bi bi-memory"></i><p>RAM: <span id="used-ram"></span>/<span id="total-ram"></span></p>
-        <i class="bi bi-nvme"></i><p>Swap: <span id="used-swap"></span>/<span id="total-swap"></span></p>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <i class="bi bi-clock"></i>
+                <span style="margin-left:10px;color:black;font-weight:normal">Current Time:</span>
+            </div>
+            <span id="current-time"></span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <i class="bi bi-pci-card-network"></i>
+                <span style="margin-left:10px;color:black;font-weight:normal">IP Address:</span>
+            </div>
+            <span id="ip-address"></span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <i class="bi bi-cpu"></i>
+                <span style="margin-left:10px;color:black;font-weight:normal">CPU Usage:</span>
+            </div>
+            <span id="cpu-usage"></span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <i class="bi bi-thermometer-half"></i>
+                <span style="margin-left:10px;color:black;font-weight:normal">SoC Temperature:</span>
+            </div>
+            <span id="soc-temp"></span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <i class="bi bi-memory"></i>
+                <span style="margin-left:10px;color:black;font-weight:normal">RAM:</span>
+            </div>
+            <span><span id="used-ram"></span>/<span id="total-ram"></span> MiB</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <i class="bi bi-nvme"></i>
+                <span style="margin-left:10px;color:black;font-weight:normal">Swap:</span>
+            </div>
+            <span><span id="used-swap"></span>/<span id="total-swap"></span> MiB</span>
+        </div>
     </div>
     <button id="shutdown-btn">Shutdown System</button>
     <button id="update-btn">Update System</button>
