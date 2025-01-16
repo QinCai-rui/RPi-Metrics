@@ -92,6 +92,14 @@ main() {
         log_failure "Failed to remove. Alias rpi-metrics-uninstall does not exist! SKIPPING"
     fi
 
+    # Source the bashrc file
+    log_info "Sourcing /etc/bash.bashrc..."
+    if source /etc/bash.bashrc; then
+        log_success "Sourced /etc/bash.bashrc"
+    else
+        log_failure "Failed to source /etc/bash.bashrc. Please do so manually"
+    fi
+
     # Optionally remove python3 and related packages if --wet is used
     if [ "$REMOVE_PYTHON_PACKAGES" = true ]; then
         if sudo apt remove --purge -y python3 python3-pip python3-venv; then

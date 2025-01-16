@@ -309,6 +309,14 @@ EOL
         log_success "Alias rpi-metrics-uninstall added!"
     fi
 
+    # Source the bashrc file
+    log_info "Sourcing /etc/bash.bashrc..."
+    if source /etc/bash.bashrc; then
+        log_success "Sourced /etc/bash.bashrc"
+    else
+        log_failure "Failed to source /etc/bash.bashrc. Please do so manually"
+    fi
+
     log_info "Reloading systemd daemon..."
     # Reload systemd daemon
     if sudo systemctl daemon-reload; then
@@ -327,7 +335,6 @@ EOL
         log_failure "Failed to start or enable rpi-metricsd service."
         exit 1
     fi
-
 
     log_success "RPi Metrics Server installation completed!"
 
