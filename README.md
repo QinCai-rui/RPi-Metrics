@@ -135,7 +135,7 @@ _Example Output:_
 
 <br>
 
-- **POST /api/shutdown**: Shut down the system (requires API key in the header). Header name should be `x-api-key`. The server returns `HTTP 200` and the following if a valid API key is provided:
+- **POST /api/shutdown**: Shutdown the system (requires API key in the header). Header name should be `x-api-key`. The server returns `HTTP 200` and the following if a valid API key is provided:
 
     ```json
     {
@@ -154,7 +154,31 @@ _Example Output:_
     _Example Usage:_
 
     ```sh
-    curl -X POST http://your_server_url/api/shutdown -H "x-api-key: your_api_key_here"
+    curl -L -X POST http://your_server_url/api/shutdown -H "x-api-key: your_api_key_here"
+    ```
+
+<br>
+
+- **POST /api/update**: Update the system (requires API key in the header). Header name should be `x-api-key`. The server returns `HTTP 200` and the following if a valid API key is provided, after a update:
+
+    ```json
+    {
+        "message": "System update complete!"
+    }
+    ```
+
+    If a valid API key is not provided, the server returns `HTTP 401` and the following:
+
+    ```json
+    {
+        "error": "Unauthorized"
+    }   
+    ```
+
+    _Example Usage:_
+
+    ```sh
+    curl -L -X POST http://your_server_url/api/update -H "x-api-key: your_api_key_here"
     ```
 
 <br>
