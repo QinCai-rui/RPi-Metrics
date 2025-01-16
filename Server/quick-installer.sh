@@ -35,7 +35,10 @@ acknowledge() {
         return 0
     fi
 
-    read -r -p "Hit enter to acknowledge"
+    echo ""
+    read -r -p "Hit enter to acknowledge" -n1
+    # Move cursor up one line, clear the line
+    tput cuu1 && tput el
 }
 
 if [ "$1" = "-y" ]; then
@@ -331,7 +334,6 @@ EOL
     log_info "The Flask server is set to automatically start on startup"
     echo -e "${BLUE}To disable it, run:${NC}"
     echo -e "${MAGENTA}   sudo systemctl disable rpi-metricsd${NC}"
-    echo ""
 
     acknowledge
 
@@ -340,7 +342,6 @@ EOL
     echo -e "${MAGENTA}API_KEY = \"your_api_key_here\"${NC}"
     log_info "You can use nano, like so: "
     echo -e "${MAGENTA}   sudo nano /usr/share/rpi-metrics/Server/env.py${NC}"
-    echo ""
 
     acknowledge
 
@@ -372,7 +373,6 @@ EOL
     echo -e "${MAGENTA}/api/all${NC}"
     echo -e "${CYAN}   - Method: GET${NC}"
     echo -e "${CYAN}   - Description: Retrieve comprehensive system statistics.${NC}"
-    echo ""
 
     acknowledge
 
