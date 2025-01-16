@@ -21,6 +21,7 @@ h1 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     max-width: 600px;
     transition: transform 0.3s, box-shadow 0.3s;
+    text-align: left;
 }
 
 #stats:hover {
@@ -32,6 +33,22 @@ p {
     font-size: 18px;
     margin: 10px 0;
     color: #333;
+}
+
+#stats p {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #dddddd;
+}
+
+#stats p:last-child {
+    border-bottom: none;
+}
+
+#stats span {
+    font-weight: bold;
+    color: #4CAF50;
 }
 
 button {
