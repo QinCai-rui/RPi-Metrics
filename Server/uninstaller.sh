@@ -113,8 +113,10 @@ elif [ "$1" = "--wet" ]; then
     REMOVE_PYTHON_PACKAGES=false
 else
     echo "Usage: $0 --wet | --extra-wet"
+    echo ""
     echo "--wet: Standard uninstallation without removing Python packages."
     echo "--extra-wet: WARNING: USE WITH CARE!! Full uninstallation including removal of Python and Python packages."
+    echo ""
     echo "YOU HAVE BEEN WARNED: DO NOT USE THE --extra-wet FLAG UNLESS YOU WANT TO REMOVE PYTHON FROM YOUR SYSTEM!!"
     exit 1
 fi
