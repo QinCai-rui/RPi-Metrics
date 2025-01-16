@@ -16,6 +16,15 @@ def get_real_ip():
         return request.headers.get('CF-Connecting-IP')
     return request.remote_addr
 
+def get_commit_info():
+    """Read the commit information"""
+    result = subprocess.run(["sudo", "bash", "/usr/share/rpi-metrics/Server/get_commit_info.sh"], stdout=subprocess.PIPE, text=True)
+    global commit_id, commit_time
+    with open('/usr/share/rpi-metrics/commit_info.txt') as f:
+        lines = f.readlines()
+        commit_id = lines[0].strip().split(': ')[1]
+        commit_time = lines[1].strip().split(': ')[1]
+
 limiter = Limiter(
     get_real_ip,
     app=app,
@@ -81,13 +90,7 @@ def get_memory_stats():
 @app.route("/")
 @limiter.limit("2 per 3 seconds")
 def index():
-    """Read the commit information and render the main HTML page"""
-    result = subprocess.run(["sudo", "bash", "/usr/share/rpi-metrics/Server/get_commit_info.sh"], stdout=subprocess.PIPE, text=True)
-    with open('/usr/share/rpi-metrics/commit_info.txt') as f:
-        lines = f.readlines()
-        commit_id = lines[0].strip().split(': ')[1]
-        commit_time = lines[1].strip().split(': ')[1]
-    
+    """Render the main HTML page"""
     return render_template('index.html', commit_id=commit_id, commit_time=commit_time)
 
 @app.route("/api/time", methods=['GET'])
@@ -165,5 +168,6 @@ def api_plain():
     return jsonify(data)
 
 if __name__ == "__main__":
+    get_commit_info()
     # Run the Flask app
     app.run(host='localhost', port=7070)
