@@ -325,6 +325,7 @@ EOL
 
     acknowledge
 
+    log_warning "IMPORTANT!!"
     echo -e "${BLUE}Modify the .env file in the server directory (/usr/share/rpi-metrics/Server) with the following content:"
     echo -e "${MAGENTA}API_KEY = \"your_api_key_here\"${NC}"
     log_info "You can use nano, like so: "
