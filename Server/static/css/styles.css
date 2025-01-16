@@ -5,19 +5,41 @@ body {
     text-align: center;
     background-color: #f5f5f5;
 }
+
 h1 {
     background-color: #4CAF50;
     color: white;
     padding: 20px;
+    margin-bottom: 30px;
 }
+
 #stats {
-    margin: 20px;
+    margin: 20px auto;
     padding: 20px;
     background-color: white;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
 }
+
 p {
     font-size: 18px;
     margin: 10px 0;
+}
+
+button {
+    font-size: 16px;
+    padding: 10px 20px;
+    margin: 10px;
+    color: white;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
 }
