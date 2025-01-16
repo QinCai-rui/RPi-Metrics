@@ -203,7 +203,7 @@ _Example Output:_
 
 - **GET /**: Access the user-friendly GUI.
 _Example Output:_
-![root GUI output image](https://cloud-khyybymq4-hack-club-bot.vercel.app/0image.png)
+![root GUI output image](https://cloud-lx3yiwapy-hack-club-bot.vercel.app/0image.png)
 
 ## Uninstallation
 If for any reason, you want to uninstall the RPi Metrics server from your Raspberry Pi, use `rpi-metrics-uninstall` to uninstall it. If that command is not found, try this if you only want to uninstall this project, Python excluded:
