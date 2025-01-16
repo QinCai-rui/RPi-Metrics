@@ -14,7 +14,7 @@ window.onload = function() {
         .then(handleResponse)
         .then(data => {
             document.getElementById('current-time').textContent = data['Current Time'];
-            document.getElementById('ip-address').textContent = data['IP Address'];
+            document.getElementById('ip-address').textContent = data['IP Address'].replaceAll(" ", "\n");
             document.getElementById('cpu-usage').textContent = data['CPU Usage'];
             document.getElementById('soc-temp').textContent = data['SoC Temperature'].replace("C", "°C");
             document.getElementById('total-ram').textContent = data['Total RAM'];
