@@ -16,11 +16,11 @@ window.onload = function() {
             document.getElementById('current-time').textContent = data['Current Time'];
             document.getElementById('ip-address').textContent = data['IP Address'];
             document.getElementById('cpu-usage').textContent = data['CPU Usage'];
-            document.getElementById('soc-temp').textContent = data['SoC Temperature'];
+            document.getElementById('soc-temp').textContent = data['SoC Temperature'].replace("C", "°C");
             document.getElementById('total-ram').textContent = data['Total RAM'];
-            document.getElementById('used-ram').textContent = data['Used RAM'];
+            document.getElementById('used-ram').textContent = data['Used RAM'].concat("MiB");
             document.getElementById('total-swap').textContent = data['Total Swap'];
-            document.getElementById('used-swap').textContent = data['Used Swap'];
+            document.getElementById('used-swap').textContent = data['Used Swap'].concat("MiB");
         })
         .catch(error => console.error('Error fetching API data:', error));
     
