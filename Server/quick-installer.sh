@@ -374,7 +374,13 @@ EOL
 
     echo -e "${MAGENTA}/api/shutdown${NC}"
     echo -e "${CYAN}   - Method: POST${NC}"
-    echo -e "${CYAN}   - Description: Shut down the system (requires API key in the header).${NC}"
+    echo -e "${CYAN}   - Description: Shutdown the system (requires API key in the header).${NC}"
+
+    acknowledge
+
+    echo -e "${MAGENTA}/api/update${NC}"
+    echo -e "${CYAN}   - Method: POST${NC}"
+    echo -e "${CYAN}   - Description: Update the system (requires API key in the header).${NC}"
 
     acknowledge
 
