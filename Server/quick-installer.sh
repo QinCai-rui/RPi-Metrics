@@ -328,16 +328,17 @@ EOL
         exit 1
     fi
 
-    # Inform the user about starting the Flask app
-    log_success "RPi Metrics installation completed!"
 
+    log_success "RPi Metrics Server installation completed!"
+
+    # Inform the user about starting the Flask app
     log_info "The Flask server is set to automatically start on startup"
     echo -e "${BLUE}To disable it, run:${NC}"
     echo -e "${MAGENTA}   sudo systemctl disable rpi-metricsd${NC}"
 
     acknowledge
 
-    log_warning "IMPORTANT!!"
+    log_warning "VERY VERY VERY IMPORTANT!!"
     echo -e "${BLUE}Modify the .env file in the server directory (/usr/share/rpi-metrics/Server) with the following content:"
     echo -e "${MAGENTA}API_KEY = \"your_api_key_here\"${NC}"
     log_info "You can use nano, like so: "
@@ -379,6 +380,8 @@ EOL
     echo "That's about it from me!"
 
     echo "HAVE FUN!!!"
+
+    log_success "RPi Metrics installation completed!"
 }
 
 main "$@"
