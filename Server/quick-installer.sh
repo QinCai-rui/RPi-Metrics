@@ -278,6 +278,17 @@ EOL
         exit 1
     fi
 
+    log_info "Adding custom alias rpi-metrics-update..."
+    # Define the alias command 
+    ALIAS_COMMAND="alias rpi-metrics-update='cd /usr/share/rpi-metrics && sudo git pull && sudo systemctl restart rpi-metricsd.service && cd -'"
+    # Check if the alias is already in the file 
+    if grep -qxF "$ALIAS_COMMAND" /etc/bash.bashrc; then
+        log_warning "Alias already exists!"
+    else
+        echo "$ALIAS_COMMAND" | sudo tee -a /etc/bash.bashrc > /dev/null
+        log_success "Alias added!"
+    fi
+
     log_info "Reloading systemd daemon..."
     # Reload systemd daemon
     if sudo systemctl daemon-reload; then
