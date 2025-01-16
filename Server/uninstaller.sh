@@ -74,13 +74,22 @@ main() {
         log_failure "Failed to remove /usr/share/rpi-metrics directory. SKIPPING"
     fi
 
-    # Remove the custom alias added
+    # Remove the custom alias rpi-metrics-update
     ALIAS_COMMAND="alias rpi-metrics-update='cd /usr/share/rpi-metrics && sudo git pull && sudo systemctl restart rpi-metricsd.service && cd -'"
     if grep -qxF "$ALIAS_COMMAND" /etc/bash.bashrc; then
         sudo sed -i "\|$ALIAS_COMMAND|d" /etc/bash.bashrc
         log_success "Alias rpi-metrics-update removed!" 
     else 
-        log_failure "Failed to remove. Alias does not exist! SKIPPING"
+        log_failure "Failed to remove. Alias rpi-metrics-update does not exist! SKIPPING"
+    fi
+
+    # Remove the custom alias rpi-metrics-uninstall
+    ALIAS_COMMAND="alias rpi-metrics-uninstall='sudo bash /usr/share/rpi-metrics/Server/uninstaller.sh'"
+    if grep -qxF "$ALIAS_COMMAND" /etc/bash.bashrc; then
+        sudo sed -i "\|$ALIAS_COMMAND|d" /etc/bash.bashrc
+        log_success "Alias rpi-metrics-uninstall removed!" 
+    else 
+        log_failure "Failed to remove. Alias rpi-metrics-uninstall does not exist! SKIPPING"
     fi
 
     # Optionally remove python3 and related packages if --wet is used

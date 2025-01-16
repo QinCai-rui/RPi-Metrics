@@ -293,7 +293,17 @@ EOL
         log_warning "Alias already exists!"
     else
         echo "$ALIAS_COMMAND" | sudo tee -a /etc/bash.bashrc > /dev/null
-        log_success "Alias added!"
+        log_success "Alias rpi-metrics-update added!"
+    fi
+
+    log_info "Adding custom alias rpi-metrics-uninstall..."
+    # Define the alias command 
+    ALIAS_COMMAND="alias rpi-metrics-uninstall='sudo bash /usr/share/rpi-metrics/Server/uninstaller.sh'"
+    if grep -qxF "$ALIAS_COMMAND" /etc/bash.bashrc; then
+        log_warning "Alias already exists!"
+    else
+        echo "$ALIAS_COMMAND" | sudo tee -a /etc/bash.bashrc > /dev/null
+        log_success "Alias rpi-metrics-uninstall added!"
     fi
 
     log_info "Reloading systemd daemon..."
