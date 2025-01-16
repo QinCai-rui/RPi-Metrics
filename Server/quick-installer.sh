@@ -30,6 +30,13 @@ mandatory_confirm() {
     esac
 }
 
+acknowledge() {
+    if [ "$AUTO_CONFIRM" = true ]; then
+        return 0
+    fi
+
+    read -r -p "Hit enter to acknowledge"
+}
 
 if [ "$1" = "-y" ]; then
     AUTO_CONFIRM=true
@@ -316,33 +323,49 @@ EOL
     echo -e "${MAGENTA}   sudo systemctl disable rpi-metricsd${NC}"
     echo ""
 
+    acknowledge
+
     echo -e "${BLUE}Modify the .env file in the server directory (/usr/share/rpi-metrics/Server) with the following content:"
     echo -e "${MAGENTA}API_KEY = \"your_api_key_here\"${NC}"
     log_info "You can use nano, like so: "
     echo -e "${MAGENTA}   sudo nano /usr/share/rpi-metrics/Server/env.py${NC}"
     echo ""
 
+    acknowledge
+
     echo -e "${BLUE}Available API Endpoints:${NC}"
     echo -e "${MAGENTA}/api/time${NC}"
     echo -e "${CYAN}   - Method: GET${NC}"
     echo -e "${CYAN}   - Description: Retrieve the current system time.${NC}"
 
+    acknowledge
+
     echo -e "${MAGENTA}/api/mem${NC}"
     echo -e "${CYAN}   - Method: GET${NC}"
     echo -e "${CYAN}   - Description: Retrieve memory statistics.${NC}"
+
+    acknowledge
 
     echo -e "${MAGENTA}/api/cpu${NC}"
     echo -e "${CYAN}   - Method: GET${NC}"
     echo -e "${CYAN}   - Description: Retrieve CPU usage.${NC}"
 
+    acknowledge
+
     echo -e "${MAGENTA}/api/shutdown${NC}"
     echo -e "${CYAN}   - Method: POST${NC}"
     echo -e "${CYAN}   - Description: Shut down the system (requires API key in the header).${NC}"
+
+    acknowledge
 
     echo -e "${MAGENTA}/api/all${NC}"
     echo -e "${CYAN}   - Method: GET${NC}"
     echo -e "${CYAN}   - Description: Retrieve comprehensive system statistics.${NC}"
     echo ""
+
+    acknowledge
+
+    echo "That's about it from me!"
 
     echo "HAVE FUN!!!"
 }
