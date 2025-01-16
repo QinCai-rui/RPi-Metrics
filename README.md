@@ -194,8 +194,6 @@ Use this if you want to remove Python and other packages installed as well:
 curl -sSL https://qincai.xyz/rpi-metrics-uninstaller.sh | sudo bash -s - -extra-wet
 ```
 
-<br>
-
 > [!WARNING]
 > Passing the `--extra-wet` flag will remove `python3`, `python3-pip`, and `python3-venv` from your system. USE WITH CAUTION!!
 
