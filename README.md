@@ -181,6 +181,24 @@ _Example Output:_
 _Example Output:_
 ![root GUI output image](https://cloud-khyybymq4-hack-club-bot.vercel.app/0image.png)
 
+## Uninstallation
+If for any reason, you want to uninstall the RPi Metrics server from your Raspberry Pi, use `rpi-metrics-uninstall` to uninstall it. If that command is not found, try this if you only want to uninstall this project, Python excluded:
+
+```sh
+curl -sSL https://qincai.xyz/rpi-metrics-uninstaller.sh | sudo bash -s - -wet
+```
+
+Use this if you want to remove Python and other packages installed as well:
+
+```sh
+curl -sSL https://qincai.xyz/rpi-metrics-uninstaller.sh | sudo bash -s - -extra-wet
+```
+
+<br>
+
+> [!WARNING]
+> Passing the `--extra-wet` flag will remove `python3`, `python3-pip`, and `python3-venv` from your system. USE WITH CAUTION!!
+
 ## Contributing
 
 Contributions are welcome! Please create an issue or fork the repository and submit a pull request for review.
