@@ -11,46 +11,34 @@
     <h1>System Statistics Data</h1>
     <p><em><strong>Scroll down please...</strong></em></p>
     <div id="stats">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
-                <i class="bi bi-clock"></i>
-                <span style="margin-left:10px;color:black;font-weight:normal">Current Time:</span>
-            </div>
+        <div class="stat-item">
+            <i class="bi bi-clock"></i>
+            <span class="label">Current Time:</span>
             <span id="current-time"></span>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
-                <i class="bi bi-pci-card-network"></i>
-                <span style="margin-left:10px;color:black;font-weight:normal">IP Address:</span>
-            </div>
+        <div class="stat-item">
+            <i class="bi bi-pci-card-network"></i>
+            <span class="label">IP Address:</span>
             <span id="ip-address"></span>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
-                <i class="bi bi-cpu"></i>
-                <span style="margin-left:10px;color:black;font-weight:normal">CPU Usage:</span>
-            </div>
+        <div class="stat-item">
+            <i class="bi bi-cpu"></i>
+            <span class="label">CPU Usage:</span>
             <span id="cpu-usage"></span>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
-                <i class="bi bi-thermometer-half"></i>
-                <span style="margin-left:10px;color:black;font-weight:normal">SoC Temperature:</span>
-            </div>
+        <div class="stat-item">
+            <i class="bi bi-thermometer-half"></i>
+            <span class="label">SoC Temperature:</span>
             <span id="soc-temp"></span>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
-                <i class="bi bi-memory"></i>
-                <span style="margin-left:10px;color:black;font-weight:normal">RAM:</span>
-            </div>
+        <div class="stat-item">
+            <i class="bi bi-memory"></i>
+            <span class="label">RAM:</span>
             <span><span id="used-ram"></span>/<span id="total-ram"></span> MiB</span>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
-                <i class="bi bi-nvme"></i>
-                <span style="margin-left:10px;color:black;font-weight:normal">Swap:</span>
-            </div>
+        <div class="stat-item">
+            <i class="bi bi-nvme"></i>
+            <span class="label">Swap:</span>
             <span><span id="used-swap"></span>/<span id="total-swap"></span> MiB</span>
         </div>
     </div>

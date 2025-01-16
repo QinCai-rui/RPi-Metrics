@@ -29,7 +29,7 @@ h1 {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-#stats div {
+.stat-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -39,8 +39,20 @@ h1 {
     color: #333;
 }
 
-#stats div:last-child {
+.stat-item:last-child {
     border-bottom: none;
+}
+
+.stat-item i {
+    font-size: 24px;
+    margin-right: 10px;
+    color: #4CAF50;
+}
+
+.stat-item .label {
+    margin-left: 10px;
+    color: black;
+    font-weight: normal;
 }
 
 #stats span {
