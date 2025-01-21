@@ -97,7 +97,7 @@ def index():
 @limiter.limit("1 per second")
 def api():
     """Handles undefined subdirectory in API calls"""
-    return jsonify({
+    return {
         "Error": "404 Not Found",
         "Reason": "No subdirectory provided",
         "Guide": "Please refer to the API documentation",
@@ -110,7 +110,7 @@ def api():
             "/api/all": "Get all system statistics"
         },
         "Documentation": "https://github.com/qincai-rui/rpi-metrics#available-api-endpoints"
-    }), 404
+    }, 404
 
 @app.route("/api/time", methods=['GET'])
 @limiter.limit("15 per minute")
