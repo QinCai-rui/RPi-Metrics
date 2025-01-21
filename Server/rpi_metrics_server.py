@@ -130,7 +130,6 @@ def api_ip():
                     "Used Swap": f"{used_swap:.0f}"
     })
 
-
 @app.route("/api/cpu", methods=['GET'])
 @limiter.limit("15 per minute")
 def api_cpu():
