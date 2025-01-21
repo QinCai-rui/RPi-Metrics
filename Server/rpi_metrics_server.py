@@ -98,7 +98,7 @@ def index():
 def api():
     """Handles undefined subdirectory in API calls"""
     return {
-        "Error": "404 Not Found",
+        "Error": "404 Not Found. Please see Documentation",
         "Available Endpoints": {
             "/api/time": "Get current server time",
             "/api/mem": "Get memory statistics",
