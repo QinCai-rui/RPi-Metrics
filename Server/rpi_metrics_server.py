@@ -99,8 +99,6 @@ def api():
     """Handles undefined subdirectory in API calls"""
     return {
         "Error": "404 Not Found",
-        "Reason": "No subdirectory provided",
-        "Guide": "Please refer to the API documentation",
         "Available Endpoints": {
             "/api/time": "Get current server time",
             "/api/mem": "Get memory statistics",
