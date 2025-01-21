@@ -93,7 +93,7 @@ def index():
     """Render the main HTML page"""
     return render_template('index.html', commit_id=commit_id, commit_time=commit_time)
 
-@app.route("/api")
+@app.route("/api", methods=['GET'])
 @limiter.limit("1 per second")
 def api():
     """Handles undefined subdirectory in API calls"""
