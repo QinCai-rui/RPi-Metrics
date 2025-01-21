@@ -93,6 +93,25 @@ def index():
     """Render the main HTML page"""
     return render_template('index.html', commit_id=commit_id, commit_time=commit_time)
 
+@app.route("/api")
+@limiter.limit("1 per second")
+def api():
+    """Handles undefined subdirectory in API calls"""
+    return jsonify({
+        "Error": "404 Not Found",
+        "Reason": "No subdirectory provided",
+        "Guide": "Please refer to the API documentation",
+        "Available Endpoints": {
+            "/api/time": "Get current server time",
+            "/api/mem": "Get memory statistics",
+            "/api/cpu": "Get CPU usage",
+            "/api/shutdown": "Authorize shutdown",
+            "/api/update": "Authorize system update",
+            "/api/all": "Get all system statistics"
+        },
+        "Documentation": "https://github.com/qincai-rui/rpi-metrics#available-api-endpoints"
+    }), 404
+
 @app.route("/api/time", methods=['GET'])
 @limiter.limit("15 per minute")
 def api_time():
@@ -170,4 +189,4 @@ def api_plain():
 if __name__ == "__main__":
     get_commit_info()
     # Run the Flask app
-    app.run(host='localhost', port=7070)
+    app.run(host='0.0.0.0', port=7070)
