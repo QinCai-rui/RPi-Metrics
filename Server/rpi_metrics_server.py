@@ -156,7 +156,7 @@ def api_update():
         # Shut down the system
         r = subprocess.run(["apt-get", "update"], stdout=subprocess.PIPE, text=True)
         #print(r)
-        r = subprocess.run(["apt-get", "upgrade", "-y"], stdout=subprocess.PIPE, text=True)
+        r = subprocess.run(["apt-get", "full-upgrade", "-y"], stdout=subprocess.PIPE, text=True)
         #print(r)
         return jsonify({"message": "System update complete!"}), 200
     return jsonify({"error": "Unauthorized"}), 401
