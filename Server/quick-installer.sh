@@ -86,6 +86,49 @@ log_warning() {
     echo -e "${YELLOW}[\u26a0] $1${NC}"
 }
 
+check_network() {
+    log_info "Checking network connectivity..."
+    sleep 0.25
+    
+    # Try to reach GitHub (needed for git clone)
+    if ! ping -c 1 github.com &> /dev/null; then
+        log_failure "Cannot reach github.com. Check your internet connection."
+        return 1
+    fi
+    
+    log_success "Network connectivity confirmed"
+    return 0
+}
+
+check_system_requirements() {
+    log_info "Checking system requirements..."
+    sleep 0.25
+    
+    # Check available disk space
+    local required_space=256000  # 250MiB in KiB
+    local available_space
+    available_space=$(df -k /usr/share | awk 'NR==2 {print $4}')
+    
+    if [ "${available_space}" -lt "${required_space}" ]; then
+        log_failure "Insufficient disk space. Need at least 250MiB free."
+        return 1
+    fi
+    
+    # Check RAM
+    local required_ram=1048576  # 1GiB in KiB
+    local available_ram
+    available_ram=$(free -k | awk '/^Mem:/ {print $2}')
+    
+    if [ "${available_ram}" -lt "${required_ram}" ]; then
+        log_warning "Insufficient RAM. Need at least 1GiB."
+        log_warning "Performance may be impacted."
+        return 0
+    fi
+    
+    log_success "System requirements met"
+    return 0
+}
+
 check_root() { 
     log_info "Checking for root privileges..." 
     sleep 0.25
@@ -221,6 +264,14 @@ main() {
     echo
     sleep 0.75
 
+    check_network || exit 1
+    echo
+    sleep 0.75
+
+    check_system_requirements || exit 1
+    echo
+    sleep 0.75
+
     check_rpi
     echo
     sleep 0.75
@@ -240,6 +291,7 @@ main() {
         log_success "Package list updated and necessary packages installed."
     else
         log_failure "Failed to update package list or install necessary packages."
+        exit 1
     fi
 
     check_vcgencmd
