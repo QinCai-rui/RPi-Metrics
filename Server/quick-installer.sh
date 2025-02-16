@@ -182,6 +182,19 @@ check_git() {
     fi
 }
 
+check_git() {
+    log_info "Checking for jq..."
+    sleep 0.25
+    if ! command -v jq &> /dev/null; then
+        log_failure "jq could not be found."
+        mandatory_confirm "Install jq?"
+        sudo apt-get update && sudo apt-get install -y jq
+        log_success "jq installed!"
+    else
+        log_success "jq is already installed."
+    fi
+}
+
 check_vcgencmd() {
     log_info "Checking installation of vcgencmd..."
     sleep 0.25
@@ -229,6 +242,17 @@ check_vcgencmd() {
     fi
 }
 
+get_latest_release() {
+    if release_tag=$(curl -s -H "Accept: application/vnd.github+json" https://api.github.com/repos/QinCai-rui/RPi-Metrics/releases/latest | jq -r .tag_name); then
+        echo "Version: $release_tag"
+        echo ""
+    else
+        echo "N/A"
+        log_failure "Failed to get the latest release."
+        echo ""
+    fi
+}
+
 main() {
     clear
     echo "Welcome to the RPi Metrics installation script!"
@@ -245,20 +269,11 @@ main() {
     sleep 0.05
     echo -e "${CYAN} |_|  \_\|_|    |_| |_|  |_| \___| \__||_|   |_| \___||___/"
     echo ""
+    get_latest_release
     sleep 1
     echo -e "${NC}Make sure that you have downloaded this script from a trustworthy source!!"
     echo ""
-    sleep 1
-    echo -e "${BLUE}#########################################################"
-    echo "#                   Not working??                       #"
-    echo "#                                                       #"
-    echo "#  Try running these, one after another:                #"
-    echo "#   \$ wget https://qincai.xyz/rpi-metrics-installer.sh  #"
-    echo "#   \$ chmod +x rpi-metrics-installer.sh                 #"
-    echo "#   \$ sudo ./rpi-metrics-installer.sh                   #"
-    echo "#########################################################"
-    echo ""
-    sleep 1
+    sleep 1.5
 
     check_root
     echo
