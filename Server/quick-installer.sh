@@ -18,7 +18,24 @@ NC='\033[0m' # No Color
 AUTO_CONFIRM=false
 
 generate_api_key() {
-    echo "$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32)"
+    local length=32
+    local api_key
+    
+    # Try using OpenSSL first
+    if command -v openssl &> /dev/null; then
+        api_key=$(openssl rand -base64 48 | tr -dc 'A-Za-z0-9' | head -c ${length})
+    else
+        # Fallback to /dev/urandom
+        api_key=$(head -c 32 /dev/urandom | tr -dc 'A-Za-z0-9' | head -c ${length})
+    fi
+    
+    if [[ ${#api_key} -eq ${length} ]]; then
+        echo "${api_key}"
+        return 0
+    else
+        log_failure "Failed to generate API key"
+        return 1
+    fi
 }
 
 mandatory_confirm() {
