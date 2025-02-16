@@ -17,6 +17,10 @@ NC='\033[0m' # No Color
 
 AUTO_CONFIRM=false
 
+generate_api_key() {
+    echo "$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32)"
+}
+
 mandatory_confirm() {
     if [ "$AUTO_CONFIRM" = true ]; then
         return 0
@@ -50,19 +54,19 @@ if [ "$1" = "--no-check-root" ]; then
 fi
 
 log_success() {
-    echo -e "${GREEN}[✔] $1${NC}"
+    echo -e "${GREEN}[\u2714] $1${NC}"
 }
 
 log_failure() {
-    echo -e "${RED}[✘] $1${NC}"
+    echo -e "${RED}[\u2718] $1${NC}"
 }
 
 log_info() {
-    echo -e "${BLUE}[ℹ] $1${NC}"
+    echo -e "${BLUE}[\u2139] $1${NC}"
 }
 
 log_warning() {
-    echo -e "${YELLOW}[⚠] $1${NC}"
+    echo -e "${YELLOW}[\u26a0] $1${NC}"
 }
 
 check_root() { 
@@ -267,10 +271,14 @@ main() {
     sudo venv/bin/pip install Flask-Limiter
     log_success "Python packages installed."
 
+    # Generate an API key
+    API_KEY=$(generate_api_key)
+    log_success "Generated API key: $API_KEY"
+
     # Create an env.py file with the necessary configuration
     log_info "Creating env.py configuration file..."
     sudo tee /usr/share/rpi-metrics/Server/env.py > /dev/null <<EOL
-API_KEY = "your_api_key_here"
+API_KEY = "$API_KEY"
 EOL
     log_success "env.py configuration file created."
 
@@ -346,10 +354,10 @@ EOL
     acknowledge
 
     log_warning "VERY VERY VERY IMPORTANT!!"
-    echo -e "${BLUE}Modify the .env file in the server directory (/usr/share/rpi-metrics/Server) with the following content:"
-    echo -e "${MAGENTA}API_KEY = \"your_api_key_here\"${NC}"
-    log_info "You can use nano, like so: "
-    echo -e "${MAGENTA}   sudo nano /usr/share/rpi-metrics/Server/env.py${NC}"
+    echo -e "${BLUE}The generated API key has been added to the env.py file."
+    echo -e "${BLUE}You can find and modify it in /usr/share/rpi-metrics/Server/env.py if needed.${NC}"
+    echo
+    echo -e "Generated API key: $API_KEY"
 
     acknowledge
 
