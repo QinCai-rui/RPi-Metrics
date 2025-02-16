@@ -230,10 +230,6 @@ check_vcgencmd() {
 }
 
 main() {
-    # Start logging
-    exec 1> >(tee -a "${LOG_FILE}")
-    exec 2> >(tee -a "${LOG_FILE}" >&2)
-
     clear
     echo "Welcome to the RPi Metrics installation script!"
     sleep 0.5
