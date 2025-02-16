@@ -244,10 +244,12 @@ check_vcgencmd() {
 
 get_latest_release() {
     if release_tag=$(curl -s -H "Accept: application/vnd.github+json" https://api.github.com/repos/QinCai-rui/RPi-Metrics/releases/latest | jq -r .tag_name); then
-        echo $release_tag
+        echo "Version: $release_tag"
+        echo ""
     else
         echo "N/A"
         log_failure "Failed to get the latest release."
+        echo ""
     fi
 }
 
@@ -267,7 +269,7 @@ main() {
     sleep 0.05
     echo -e "${CYAN} |_|  \_\|_|    |_| |_|  |_| \___| \__||_|   |_| \___||___/"
     echo ""
-    echo $release_tag
+    get_latest_release
     sleep 1
     echo -e "${NC}Make sure that you have downloaded this script from a trustworthy source!!"
     echo ""
