@@ -139,6 +139,7 @@ check_root() {
     
     if [ "$EUID" -ne 0 ]; then 
         log_failure "Please run as root." 
+        echo "If you encountered any problems, please check out https://github.com/QinCai-rui/RPi-Metrics/blob/main/README.md!"
         exit 1 
     else 
         log_success "Running as root." 
@@ -152,6 +153,7 @@ check_rpi() {
         log_success "Running on a Raspberry Pi."
     else
         log_failure "This script can only be run on a Raspberry Pi."
+        echo "If you encountered any problems, please check out https://github.com/QinCai-rui/RPi-Metrics/blob/main/README.md!"
         exit 1
     fi
 }
@@ -306,6 +308,7 @@ main() {
         log_success "Package list updated and necessary packages installed."
     else
         log_failure "Failed to update package list or install necessary packages."
+        echo "If you encountered any problems, please check out https://github.com/QinCai-rui/RPi-Metrics/blob/main/README.md!"
         exit 1
     fi
 
@@ -319,6 +322,7 @@ main() {
         log_success "Directory for rpi-metrics created in /usr/share."
     else
         log_failure "Failed to create directory for rpi-metrics."
+        echo "If you encountered any problems, please check out https://github.com/QinCai-rui/RPi-Metrics/blob/main/README.md!"
         exit 1
     fi
 
@@ -377,6 +381,7 @@ EOL
         log_success "Systemd service file copied successfully."
     else
         log_failure "Failed to copy systemd service file."
+        echo "If you encountered any problems, please check out https://github.com/QinCai-rui/RPi-Metrics/blob/main/README.md!"
         exit 1
     fi
 
@@ -425,6 +430,7 @@ EOL
         log_success "rpi-metricsd service started and enabled."
     else
         log_failure "Failed to start or enable rpi-metricsd service."
+        echo "If you encountered any problems, please check out https://github.com/QinCai-rui/RPi-Metrics/blob/main/README.md!"
         exit 1
     fi
 
@@ -485,6 +491,10 @@ EOL
     echo "That's about it from me!"
 
     echo "HAVE FUN!!!"
+
+    echo ""
+
+    echo "If you encountered any problems, please check out https://github.com/QinCai-rui/RPi-Metrics/blob/main/README.md!"
 
     log_success "RPi Metrics installation completed!"
 }
