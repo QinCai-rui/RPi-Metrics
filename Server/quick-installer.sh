@@ -121,7 +121,7 @@ check_system_requirements() {
     
     if [ "${available_ram}" -lt "${required_ram}" ]; then
         log_warning "Insufficient RAM. Need at least 1GiB."
-        log_info "Performance may be impacted."
+        log_warning "Performance may be impacted."
         return 0
     fi
     
