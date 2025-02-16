@@ -105,23 +105,24 @@ check_system_requirements() {
     sleep 0.25
     
     # Check available disk space
-    local required_space=500000  # 500MB in KB
+    local required_space=256000  # 250MiB in KiB
     local available_space
     available_space=$(df -k /usr/share | awk 'NR==2 {print $4}')
     
     if [ "${available_space}" -lt "${required_space}" ]; then
-        log_failure "Insufficient disk space. Need at least 500MB free."
+        log_failure "Insufficient disk space. Need at least 250MiB free."
         return 1
     fi
     
     # Check RAM
-    local required_ram=512000  # 512MB in KB
+    local required_ram=1048576  # 1GiB in KiB
     local available_ram
     available_ram=$(free -k | awk '/^Mem:/ {print $2}')
     
     if [ "${available_ram}" -lt "${required_ram}" ]; then
-        log_failure "Insufficient RAM. Need at least 512MB."
-        return 1
+        log_warning "Insufficient RAM. Need at least 1GiB."
+        log_info "Performance may be impacted."
+        return 0
     fi
     
     log_success "System requirements met"
