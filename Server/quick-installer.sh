@@ -182,6 +182,19 @@ check_git() {
     fi
 }
 
+check_git() {
+    log_info "Checking for jq..."
+    sleep 0.25
+    if ! command -v jq &> /dev/null; then
+        log_failure "jq could not be found."
+        mandatory_confirm "Install jq?"
+        sudo apt-get update && sudo apt-get install -y jq
+        log_success "jq installed!"
+    else
+        log_success "jq is already installed."
+    fi
+}
+
 check_vcgencmd() {
     log_info "Checking installation of vcgencmd..."
     sleep 0.25
