@@ -236,6 +236,7 @@ get_latest_release() {
         echo "N/A"
         log_failure "Failed to get the latest release."
     fi
+}
 
 main() {
     clear
