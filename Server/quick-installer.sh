@@ -387,7 +387,7 @@ EOL
 
     log_info "Adding custom alias rpi-metrics-update..."
     # Define the alias command 
-    ALIAS_COMMAND="alias rpi-metrics-update='cd /usr/share/rpi-metrics && sudo git pull && sudo systemctl restart rpi-metricsd.service && cd -'"
+    ALIAS_COMMAND="alias rpi-metrics-update='cd /usr/share/rpi-metrics && sudo git pull && sudo systemctl restart rpi-metricsd.service && cd - > /dev/null'"
     # Check if the alias is already in the file 
     if grep -qxF "$ALIAS_COMMAND" /etc/bash.bashrc; then
         log_warning "Alias already exists!"
