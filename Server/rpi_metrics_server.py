@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import env  # env.py file
