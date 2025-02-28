@@ -184,6 +184,11 @@ def api_plain():
 
     return jsonify(data)
 
+@app.route("/docs", methods=['GET'])
+def docs():
+    """Redirect to the GitHub documentation"""
+    return redirect("https://github.com/QinCai-rui/RPi-Metrics#rpi-metrics")
+
 if __name__ == "__main__":
     get_commit_info()
     # Run the Flask app
