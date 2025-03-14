@@ -19,7 +19,7 @@
 Welcome to the **RPi Metrics** project! This project allows you to monitor and manage your Raspberry Pi's system metrics such as CPU usage, memory usage, and more via a Flask server and a client application (optional but highly recommended).
 
 > [!TIP]
-> You can also _**remote poweroff**_ and _**remote update**_ your Pi, from anywhere in the world, provided that the server is reachable from the wider internet. (Check out <https://pi-monitor.qincai.xyz> to see it yourself!)
+> You can also _**remote poweroff**_, _**remote reboot**_, and _**remote update**_ your Pi, from anywhere in the world, provided that the server is reachable from the wider internet. (Check out <https://pi5-monitor.qincai.xyz> to see it yourself!)
 
 ## Prerequisites
 
@@ -145,10 +145,36 @@ _Example Output:_
 
     ```json
     {
-      "CPU Usage": "31%"
+      "CPU Usage": "31%",
+      "SoC Temperature": "48.9C"
     }
     ```
 
+<br>
+
+- **GET /api/disk**: Retrieve disk usage statistics. Example Output:
+
+    ```json
+    {
+      "Total Space": "32G",
+      "Used Space": "12G",
+      "Available Space": "18G",
+      "Usage Percentage": "41%"
+    }
+    ```
+    
+<br>
+
+- **GET /api/system**: Retrieve detailed system information. Example Output:
+  
+    ```json
+    {
+      "Model": "Raspberry Pi 5 Model B Rev 1.0",
+      "Kernel Version": "6.6.74+rpt-rpi-2712",
+      "OS": "Debian GNU/Linux trixie/sid"
+    }
+    ```
+    
 <br>
 
 - **POST /api/shutdown**: Shutdown the system (requires API key in the header). Header name should be `x-api-key`. The server returns `HTTP 200` and the following if a valid API key is provided:
@@ -173,6 +199,24 @@ _Example Output:_
     curl -L -X POST http://your_server_url/api/shutdown -H "x-api-key: your_api_key_here"
     ```
 
+<br>
+
+- **POST /api/reboot**: Reboot the system (requires API key in the header). The server returns HTTP 200 and the following if a valid API key is provided:
+  
+    ```json
+    {
+        "message": "System rebooting now"
+    }
+    ```
+
+    If a valid API key is not provided, the server returns HTTP 401.
+
+    _Example Usage:_
+
+    ```sh
+    curl -L -X POST http://your_server_url/api/reboot -H "x-api-key: your_api_key_here"
+    ```
+    
 <br>
 
 - **POST /api/update**: Update the system (requires API key in the header). Header name should be `x-api-key`. The server returns `HTTP 200` and the following if a valid API key is provided, after a update:
