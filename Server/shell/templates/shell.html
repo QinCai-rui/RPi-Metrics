@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPi Web Shell</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.1.0/css/xterm.css" />
+    <!-- Make sure Socket.IO is loaded before our script -->
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.1.0/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js"></script>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #1e1e1e;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .terminal-container {
+            flex: 1;
+            padding: 10px;
+            background-color: #2d2d2d;
+            overflow: hidden;
+        }
+        
+        #terminal {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .api-key-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: #3c3c3c;
+            padding: 20px;
+            border-radius: 5px;
+            width: 300px;
+            color: white;
+        }
+        
+        .modal-content h2 {
+            margin-top: 0;
+        }
+        
+        .modal-content input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            background-color: #2d2d2d;
+            border: 1px solid #555;
+            color: white;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .logout-btn {
+            background-color: #f44336;
+        }
+        
+        .logout-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .status-connected {
+            background-color: #4CAF50;
+        }
+
+        .status-disconnected {
+            background-color: #f44336;
+        }
+
+        .status-text {
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #ccc;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        footer .left {
+            text-align: left;
+        }
+
+        footer .right {
+            text-align: right;
+        }
+
+        footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="api-key-modal" class="api-key-modal">
+        <div class="modal-content">
+            <h2>Authentication Required</h2>
+            <p>Please enter your API key to access the shell:</p>
+            <input type="password" id="api-key-input" placeholder="Enter API key">
+            <div class="modal-buttons">
+                <button onclick="window.location.href='http://localhost:5000'">Back to Dashboard</button>
+                <button onclick="authenticateWithApiKey()">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <h1>RPi Web Shell</h1>
+        <div>
+            <span id="connection-status"></span>
+            <button onclick="window.location.href='http://localhost:5000'">Dashboard</button>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </header>
+    
+    <div class="terminal-container">
+        <div id="terminal"></div>
+    </div>
+
+    <footer>
+        <div class="left">
+            <span id="current-time"></span>
+        </div>
+        <div class="center">
+            Part of <a href="https://github.com/QinCai-rui/RPi-Metrics" target="_blank">RPi-Metrics</a>
+        </div>
+        <div class="right">
+            Made with ❤️ by <a href="https://github.com/QinCai-rui" target="_blank">@QinCai-rui</a>
+        </div>
+    </footer>
+    
+    <script>
+        // Check if the user is authenticated
+        let apiKey = localStorage.getItem('rpi_metrics_shell_api_key');
+        let socket;
+        let term;
+        let fitAddon;
+        let pendingInputs = []; // Track inputs waiting for acknowledgment
+        let inputTimeout; // Timeout for resending inputs
+        let connected = false;
+        
+        // Update connection status display
+        function updateConnectionStatus() {
+            const statusElement = document.getElementById('connection-status');
+            if (connected) {
+                statusElement.innerHTML = '<span class="status-indicator status-connected"></span><span class="status-text">Connected</span>';
+            } else {
+                statusElement.innerHTML = '<span class="status-indicator status-disconnected"></span><span class="status-text">Disconnected</span>';
+            }
+        }
+        
+        // Update the current time
+        function updateCurrentTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short',
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('current-time').textContent = now.toLocaleDateString('en-US', options);
+        }
+        
+        // Initialize terminal
+        function initTerminal() {
+            // Create terminal with 256 color support
+            term = new Terminal({
+                cursorBlink: true,
+                theme: {
+                    background: '#2d2d2d',
+                    foreground: '#f8f8f8',
+                    cursor: '#ffffff'
+                },
+                fontFamily: 'Courier New, monospace',
+                fontSize: 14,
+                allowProposedApi: true,
+                convertEol: true,
+                rendererType: 'canvas',
+                allowTransparency: true,
+                cursorStyle: 'block',
+                scrollback: 10000,
+                termName: 'xterm-256color'  // Set the terminal name
+            });
+            
+            fitAddon = new FitAddon.FitAddon();
+            term.loadAddon(fitAddon);
+            term.open(document.getElementById('terminal'));
+            fitAddon.fit();
+            
+            term.writeln('Connecting to RPi Web Shell...');
+            
+            // Connect to socket.io - make sure we're using the correct URL
+            // This ensures it works even if accessed through a reverse proxy
+            const serverUrl = window.location.protocol + '//' + window.location.host;
+            const socketOptions = {
+                reconnectionAttempts: 5,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 5000,
+                timeout: 20000
+            };
+            socket = io(serverUrl, socketOptions);
+            
+            // Socket.io event listeners
+            socket.on('connect', function() {
+                connected = true;
+                updateConnectionStatus();
+                term.writeln('Connection established.');
+                
+                // Send API key for authentication
+                socket.emit('authenticate', { apiKey: apiKey });
+            });
+            
+            socket.on('disconnect', function() {
+                connected = false;
+                updateConnectionStatus();
+                term.writeln('\r\nDisconnected from server. Attempting to reconnect...');
+            });
+            
+            socket.on('reconnect', function() {
+                connected = true;
+                updateConnectionStatus();
+                term.writeln('\r\nReconnected to server.');
+                
+                // Re-authenticate after reconnection
+                socket.emit('authenticate', { apiKey: apiKey });
+            });
+            
+            socket.on('reconnect_failed', function() {
+                term.writeln('\r\nFailed to reconnect after multiple attempts. Please refresh the page.');
+            });
+            
+            socket.on('authentication_failed', function() {
+                term.writeln('\r\nAuthentication failed.');
+                showApiKeyModal();
+            });
+            
+            socket.on('authentication_success', function() {
+                term.writeln('\r\nAuthenticated successfully. Starting shell...\r\n');
+                
+                // Request a new shell
+                socket.emit('create_shell', {
+                    cols: term.cols,
+                    rows: term.rows
+                });
+            });
+            
+            socket.on('shell_output', function(data) {
+                term.write(data.output);
+            });
+            
+            socket.on('shell_error', function(data) {
+                term.writeln('\r\nError: ' + data.error);
+            });
+            
+            // Send terminal input to server with retries
+            term.onData(function(data) {
+                sendInput(data);
+            });
+            
+            // Handle terminal resize
+            window.addEventListener('resize', function() {
+                fitAddon.fit();
+                socket.emit('resize_terminal', {
+                    cols: term.cols,
+                    rows: term.rows
+                });
+            });
+            
+            // Update the time every second
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+        }
+        
+        // Function to send input with retry capability
+        function sendInput(data) {
+            if (!connected) {
+                console.warn("Not connected, can't send input");
+                return;
+            }
+            
+            // Add to pending inputs
+            pendingInputs.push(data);
+            
+            // Send with acknowledgment
+            socket.emit('shell_input', { input: data }, function(response) {
+                // If success, remove from pending inputs
+                if (response && response.success) {
+                    const index = pendingInputs.indexOf(data);
+                    if (index !== -1) {
+                        pendingInputs.splice(index, 1);
+                    }
+                } else {
+                    console.warn("Input not acknowledged by server, will retry");
+                    // Will be retried by the retryPendingInputs function
+                }
+            });
+            
+            // Set timeout for retrying if we don't get acknowledgment
+            clearTimeout(inputTimeout);
+            inputTimeout = setTimeout(retryPendingInputs, 500);
+        }
+        
+        // Function to retry any pending inputs
+        function retryPendingInputs() {
+            if (pendingInputs.length > 0 && connected) {
+                console.log(`Retrying ${pendingInputs.length} pending inputs`);
+                
+                // Make a copy before we start modifying it
+                const inputsToRetry = [...pendingInputs];
+                pendingInputs = [];
+                
+                // Retry each input
+                for (let data of inputsToRetry) {
+                    sendInput(data);
+                }
+            }
+        }
+        
+        function showApiKeyModal() {
+            document.getElementById('api-key-modal').style.display = 'flex';
+        }
+        
+        function authenticateWithApiKey() {
+            apiKey = document.getElementById('api-key-input').value;
+            if (apiKey) {
+                localStorage.setItem('rpi_metrics_shell_api_key', apiKey);
+                document.getElementById('api-key-modal').style.display = 'none';
+                
+                // Reload the page to reinitialize the terminal with the new API key
+                window.location.reload();
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('rpi_metrics_shell_api_key');
+            
+            // Disconnect socket if connected
+            if (socket) {
+                socket.disconnect();
+            }
+            
+            showApiKeyModal();
+        }
+        
+        // Check authentication and initialize
+        if (!apiKey) {
+            showApiKeyModal();
+        } else {
+            initTerminal();
+            updateConnectionStatus();
+        }
+
+        // Add an error handler for Socket.IO connection issues
+        window.addEventListener('error', function(e) {
+            if (e.message.includes('io is not defined')) {
+                alert('Failed to load Socket.IO library. Please check your internet connection and try again.');
+            }
+        });
+        
+        // Allow pressing Enter in the API key input field
+        document.getElementById('api-key-input').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                authenticateWithApiKey();
+            }
+        });
+    </script>
+</body>
+</html>
