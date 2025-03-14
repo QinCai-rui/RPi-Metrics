@@ -19,6 +19,13 @@
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between">
             <div>
+                <i class="bi bi-hourglass-split"></i>
+                <span style="margin-left:10px;color:black;font-weight:normal">System Uptime:</span>
+            </div>
+            <span id="system-uptime"></span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
                 <i class="bi bi-pci-card-network"></i>
                 <span style="margin-left:10px;color:black;font-weight:normal">IP Address:</span>
             </div>
@@ -52,8 +59,44 @@
             </div>
             <span><span id="used-swap"></span>/<span id="total-swap"></span></span>
         </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <i class="bi bi-hdd"></i>
+                <span style="margin-left:10px;color:black;font-weight:normal">Disk Usage:</span>
+            </div>
+            <span id="disk-usage"></span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <i class="bi bi-device-hdd"></i>
+                <span style="margin-left:10px;color:black;font-weight:normal">Disk Space:</span>
+            </div>
+            <span><span id="disk-used"></span>/<span id="disk-total"></span> (<span id="disk-available"></span> free)</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <i class="bi bi-motherboard"></i>
+                <span style="margin-left:10px;color:black;font-weight:normal">System Model:</span>
+            </div>
+            <span id="system-model"></span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <i class="bi bi-gear"></i>
+                <span style="margin-left:10px;color:black;font-weight:normal">Kernel:</span>
+            </div>
+            <span id="kernel-version"></span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <i class="bi bi-ubuntu"></i>
+                <span style="margin-left:10px;color:black;font-weight:normal">Operating System:</span>
+            </div>
+            <span id="os-version"></span>
+        </div>
     </div>
     <button id="shutdown-btn">Shutdown System</button>
+    <button id="reboot-btn">Reboot System</button>
     <button id="update-btn">Update System</button>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <hr>

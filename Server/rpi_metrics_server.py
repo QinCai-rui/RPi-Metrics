@@ -87,6 +87,43 @@ def get_memory_stats():
 
     return total_ram, used_ram, total_swap, used_swap
 
+def get_disk_info():
+    """Function to get disk usage statistics"""
+    result = subprocess.run(["df", "-h", "/"], stdout=subprocess.PIPE, text=True)
+    lines = result.stdout.strip().split('\n')
+    parts = lines[1].split()
+    
+    return {
+        "Total Space": parts[1],
+        "Used Space": parts[2],
+        "Available Space": parts[3],
+        "Usage Percentage": parts[4]
+    }
+
+def get_system_info():
+    """Function to get system information"""
+    model_result = subprocess.run(["cat", "/proc/device-tree/model"], stdout=subprocess.PIPE, text=True)
+    kernel_result = subprocess.run(["uname", "-r"], stdout=subprocess.PIPE, text=True)
+    os_result = subprocess.run(["cat", "/etc/os-release"], stdout=subprocess.PIPE, text=True)
+    
+    # Parse OS release info
+    os_info = {}
+    for line in os_result.stdout.strip().split('\n'):
+        if '=' in line:
+            key, value = line.split('=', 1)
+            os_info[key] = value.strip('"')
+    
+    return {
+        "Model": model_result.stdout.strip().replace('\x00', ''),
+        "Kernel Version": kernel_result.stdout.strip(),
+        "OS": os_info.get('PRETTY_NAME', 'Unknown')
+    }
+
+def get_uptime_info():
+    """Function to get system uptime"""
+    result = subprocess.run(["uptime", "-p"], stdout=subprocess.PIPE, text=True)
+    return result.stdout.strip()
+
 @app.route("/")
 @limiter.limit("2 per 3 seconds")
 def index():
@@ -103,7 +140,11 @@ def api():
             "/api/time": "Get current server time",
             "/api/mem": "Get memory statistics",
             "/api/cpu": "Get CPU usage",
+            "/api/disk": "Get disk usage statistics",
+            "/api/uptime": "Get system uptime",
+            "/api/system": "Get system information",
             "/api/shutdown": "Authorize shutdown",
+            "/api/reboot": "Authorize system reboot",
             "/api/update": "Authorize system update",
             "/api/all": "Get all system statistics"
         },
@@ -138,6 +179,25 @@ def api_cpu():
                     "SoC Temperature": temp
     })
 
+@app.route("/api/disk", methods=['GET'])
+@limiter.limit("5 per minute")
+def api_disk():
+    """Return disk usage statistics as JSON"""
+    return jsonify(get_disk_info())
+
+@app.route("/api/uptime", methods=['GET'])
+@limiter.limit("5 per minute")
+def api_uptime():
+    """Return system uptime as JSON"""
+    uptime = get_uptime_info()
+    return jsonify({"System Uptime": uptime})
+
+@app.route("/api/system", methods=['GET'])
+@limiter.limit("2 per minute")
+def api_system():
+    """Return system information as JSON"""
+    return jsonify(get_system_info())
+
 @app.route("/api/shutdown", methods=['POST'])
 @limiter.limit("5 per hour")
 def api_shutdown():
@@ -148,6 +208,16 @@ def api_shutdown():
         r = subprocess.run(["shutdown", "+1"], stdout=subprocess.PIPE, text=True)
         print(r)
         return jsonify({"message": "System shutting down in 1 minute"}), 200
+    return jsonify({"error": "Unauthorized"}), 401
+
+@app.route("/api/reboot", methods=['POST'])
+@limiter.limit("5 per hour")
+def api_reboot():
+    """Authenticate using API key and reboot the system"""
+    api_key = request.headers.get('x-api-key')
+    if api_key == API_KEY:
+        r = subprocess.run(["reboot"], stdout=subprocess.PIPE, text=True)
+        return jsonify({"message": "System rebooting now"}), 200
     return jsonify({"error": "Unauthorized"}), 401
 
 @app.route("/api/update", methods=['POST'])
@@ -168,11 +238,15 @@ def api_update():
 @limiter.limit("1 per second")
 def api_plain():
     """Collect system statistics and return as JSON (original endpoint /api)"""
+    # Use existing functions for all metrics (just to DRY)
     time = get_current_time()
     ipv4 = get_ipv4_addr()
     cpu = get_cpu_usage()
     temp = get_soc_temp()
     total_ram, used_ram, total_swap, used_swap = get_memory_stats()
+    disk_info = get_disk_info()
+    uptime = get_uptime_info()
+    system_info = get_system_info()
 
     data = {
         "Current Time": time,
@@ -182,7 +256,15 @@ def api_plain():
         "Total RAM": f"{total_ram:.0f}MiB",
         "Used RAM": f"{used_ram:.0f}",
         "Total Swap": f"{total_swap:.0f}MiB",
-        "Used Swap": f"{used_swap:.0f}"
+        "Used Swap": f"{used_swap:.0f}",
+        "System Uptime": uptime,
+        "Disk Total": disk_info["Total Space"],
+        "Disk Used": disk_info["Used Space"],
+        "Disk Available": disk_info["Available Space"],
+        "Disk Usage": disk_info["Usage Percentage"],
+        "System Model": system_info["Model"],
+        "Kernel Version": system_info["Kernel Version"],
+        "OS": system_info["OS"]
     }
 
     return jsonify(data)
