@@ -133,7 +133,10 @@ def api_ip():
 def api_cpu():
     """Return the CPU usage as JSON"""
     cpu = get_cpu_usage()
-    return jsonify({"CPU Usage": cpu})
+    temp = get_soc_temp()
+    return jsonify({"CPU Usage": cpu,
+                    "SoC Temperature": temp
+    })
 
 @app.route("/api/shutdown", methods=['POST'])
 @limiter.limit("5 per hour")
