@@ -36,8 +36,8 @@ jobs:
         setup(
             name="rpi-metrics-server",
             version="${{ github.event.release.tag_name || '1.0.0' }}",
-            author="QinCai-rui",
-            author_email="raymontqin_rui@outlook.com",
+            author="qincai",
+            author_email="raymont@qincai.xyz",
             description="Monitor and manage Raspberry Pi system metrics via a Flask server",
             long_description=open("README.md").read(),
             long_description_content_type="text/markdown",
