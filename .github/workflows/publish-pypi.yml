@@ -35,7 +35,7 @@ jobs:
         
         setup(
             name="rpi-metrics-server",
-            version="${{ github.event.release.tag_name || '1.0.0' }}",
+            version="__VERSION_PLACEHOLDER__",
             author="qincai",
             author_email="raymont@qincai.xyz",
             description="Monitor and manage Raspberry Pi system metrics via a Flask server",
@@ -63,7 +63,10 @@ jobs:
             },
         )
         EOF
-        
+
+        # Replace the placeholder with the release tag dynamically
+        sed -i "s/__VERSION_PLACEHOLDER__/${{ github.event.release.tag_name }}/" setup.py
+
         # Create pyproject.toml
         cat > pyproject.toml << 'EOF'
         [build-system]
