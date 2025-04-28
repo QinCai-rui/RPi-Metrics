@@ -78,8 +78,8 @@ jobs:
         mkdir -p rpi_metrics/server
         
         # Create __init__.py files
-        echo '__version__ = "${{ github.event.release.tag_name || '0.1.0' }}"' > rpi_metrics/__init__.py
-        echo '# RPi Metrics Server Package' > rpi_metrics/server/__init__.py
+        echo "__version__ = '__VERSION_PLACEHOLDER__'" > rpi_metrics/__init__.py
+        sed -i "s/__VERSION_PLACEHOLDER__/${{ github.event.release.tag_name }}/" rpi_metrics/__init__.py
         
         # Modify server script to make it importable as a module
         cp Server/rpi_metrics_server.py rpi_metrics/server/
