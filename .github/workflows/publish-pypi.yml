@@ -31,45 +31,45 @@ jobs:
       run: |
         # Create setup.py if it doesn't exist
         cat > setup.py << 'EOF'
-from setuptools import setup, find_packages
-
-setup(
-    name="rpi-metrics-server",
-    version="${{ github.event.release.tag_name || '1.0.0' }}",
-    author="QinCai-rui",
-    author_email="raymontqin_rui@outlook.com",
-    description="Monitor and manage Raspberry Pi system metrics via a Flask server",
-    long_description=open("README.md").read(),
-    long_description_content_type="text/markdown",
-    url="https://github.com/QinCai-rui/RPi-Metrics",
-    packages=find_packages(),
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-        "Operating System :: POSIX :: Linux",
-        "Topic :: System :: Monitoring",
-        "Framework :: Flask",
-    ],
-    python_requires=">=3.6",
-    install_requires=[
-        "flask",
-        "flask-limiter",
-    ],
-    include_package_data=True,
-    entry_points={
-        'console_scripts': [
-            'rpi-metrics-server=rpi_metrics.server.rpi_metrics_server:main',
-        ],
-    },
-)
-EOF
+        from setuptools import setup, find_packages
+        
+        setup(
+            name="rpi-metrics-server",
+            version="${{ github.event.release.tag_name || '1.0.0' }}",
+            author="QinCai-rui",
+            author_email="raymontqin_rui@outlook.com",
+            description="Monitor and manage Raspberry Pi system metrics via a Flask server",
+            long_description=open("README.md").read(),
+            long_description_content_type="text/markdown",
+            url="https://github.com/QinCai-rui/RPi-Metrics",
+            packages=find_packages(),
+            classifiers=[
+                "Programming Language :: Python :: 3",
+                "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+                "Operating System :: POSIX :: Linux",
+                "Topic :: System :: Monitoring",
+                "Framework :: Flask",
+            ],
+            python_requires=">=3.6",
+            install_requires=[
+                "flask",
+                "flask-limiter",
+            ],
+            include_package_data=True,
+            entry_points={
+                'console_scripts': [
+                    'rpi-metrics-server=rpi_metrics.server.rpi_metrics_server:main',
+                ],
+            },
+        )
+        EOF
         
         # Create pyproject.toml
         cat > pyproject.toml << 'EOF'
-[build-system]
-requires = ["setuptools>=42", "wheel"]
-build-backend = "setuptools.build_meta"
-EOF
+        [build-system]
+        requires = ["setuptools>=42", "wheel"]
+        build-backend = "setuptools.build_meta"
+        EOF
         
         # Create package structure (server only)
         mkdir -p rpi_metrics/server
@@ -87,23 +87,23 @@ EOF
         # Add a main function to the server script
         cat >> rpi_metrics/server/rpi_metrics_server.py << 'EOF'
 
-def main():
-    """Entry point for the console script"""
-    try:
-        get_commit_info()
-    except Exception as e:
-        print(f"Warning: Unable to get commit info: {e}")
-        # Define global variables that would normally be set by get_commit_info
-        global commit_id, commit_time
-        commit_id = "N/A"
-        commit_time = "N/A"
-    
-    # Run the Flask app
-    app.run(host='0.0.0.0', port=7070)
-
-if __name__ == "__main__":
-    main()
-EOF
+        def main():
+            """Entry point for the console script"""
+            try:
+                get_commit_info()
+            except Exception as e:
+                print(f"Warning: Unable to get commit info: {e}")
+                # Define global variables that would normally be set by get_commit_info
+                global commit_id, commit_time
+                commit_id = "N/A"
+                commit_time = "N/A"
+            
+            # Run the Flask app
+            app.run(host='0.0.0.0', port=7070)
+        
+        if __name__ == "__main__":
+            main()
+        EOF
         
         # Copy server files
         cp -r Server/static rpi_metrics/server/ || echo "No static directory found"
@@ -113,53 +113,53 @@ EOF
         
         # Create MANIFEST.in to include non-Python files
         cat > MANIFEST.in << 'EOF'
-recursive-include rpi_metrics/server/static *
-recursive-include rpi_metrics/server/templates *
-include rpi_metrics/server/*.sh
-include rpi_metrics/server/*.service
-include README.md
-include LICENSE
-EOF
+        recursive-include rpi_metrics/server/static *
+        recursive-include rpi_metrics/server/templates *
+        include rpi_metrics/server/*.sh
+        include rpi_metrics/server/*.service
+        include README.md
+        include LICENSE
+        EOF
 
         # Create a README specifically for PyPI if needed
         cat > README-PyPI.md << 'EOF'
-# RPi-Metrics Server
-
-A Flask server that allows you to monitor and manage your Raspberry Pi's system metrics such as CPU usage, memory usage, and more.
-
-## Features
-
-- Monitor CPU usage, temperature, and memory usage
-- Simple RESTful API for retrieving system metrics
-- Flask web server with rate limiting
-- System control via authenticated API endpoints (shutdown, reboot, update)
-
-## Installation
-
-```bash
-pip install rpi-metrics-server
-```
-
-## Usage
-
-After installation, you can run the server with:
-
-```bash
-rpi-metrics-server
-```
-
-Or set the API key via environment variable:
-
-```bash
-RPI_METRICS_API_KEY="your_secure_api_key" rpi-metrics-server
-```
-
-For more detailed instructions and client setup, please visit the [GitHub repository](https://github.com/QinCai-rui/RPi-Metrics).
-
-## License
-
-This project is licensed under the GNU General Public License v3.0 - see the LICENSE file for details.
-EOF
+        # RPi-Metrics Server
+        
+        A Flask server that allows you to monitor and manage your Raspberry Pi's system metrics such as CPU usage, memory usage, and more.
+        
+        ## Features
+        
+        - Monitor CPU usage, temperature, and memory usage
+        - Simple RESTful API for retrieving system metrics
+        - Flask web server with rate limiting
+        - System control via authenticated API endpoints (shutdown, reboot, update)
+        
+        ## Installation
+        
+        ```bash
+        pip install rpi-metrics-server
+        ```
+        
+        ## Usage
+        
+        After installation, you can run the server with:
+        
+        ```bash
+        rpi-metrics-server
+        ```
+        
+        Or set the API key via environment variable:
+        
+        ```bash
+        RPI_METRICS_API_KEY="your_secure_api_key" rpi-metrics-server
+        ```
+        
+        For more detailed instructions and client setup, please visit the [GitHub repository](https://github.com/QinCai-rui/RPi-Metrics).
+        
+        ## License
+        
+        This project is licensed under the GNU General Public License v3.0 - see the LICENSE file for details.
+        EOF
 
     - name: Build package
       run: python -m build
