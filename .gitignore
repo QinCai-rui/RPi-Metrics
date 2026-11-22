@@ -55,3 +55,7 @@ dmypy.json
 env*
 .env*
 venv/
+
+# Hub build and dependency directories
+.venv/
+node_modules/

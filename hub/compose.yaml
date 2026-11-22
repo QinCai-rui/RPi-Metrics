@@ -1,0 +1,33 @@
+services:
+  hub:
+    build: .
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      FLEETMUSTER_AGENT_URL: ${FLEETMUSTER_AGENT_URL:-http://127.0.0.1:7070}
+      FLEETMUSTER_ACTIVITY_TOKEN: ${FLEETMUSTER_ACTIVITY_TOKEN:-}
+      FLEETMUSTER_BIND: ${FLEETMUSTER_BIND:-127.0.0.1}
+      FLEETMUSTER_PORT: ${FLEETMUSTER_PORT:-8080}
+      FLEETMUSTER_SECURE_COOKIE: ${FLEETMUSTER_SECURE_COOKIE:-0}
+    volumes:
+      - hub-data:/data
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - |
+          import os, urllib.request
+          bind = os.environ["FLEETMUSTER_BIND"]
+          host = {"0.0.0.0": "127.0.0.1", "::": "::1"}.get(bind, bind)
+          if ":" in host:
+              host = f"[{host}]"
+          port = os.environ["FLEETMUSTER_PORT"]
+          opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+          opener.open(f"http://{host}:{port}/health", timeout=2).close()
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  hub-data:

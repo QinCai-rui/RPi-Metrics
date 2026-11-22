@@ -1,0 +1,15 @@
+**
+!Dockerfile
+!backend/
+!backend/pyproject.toml
+!backend/uv.lock
+!backend/fleetmuster_hub/
+!backend/fleetmuster_hub/**
+!frontend/
+!frontend/package.json
+!frontend/bun.lock
+!frontend/tsconfig.json
+!frontend/index.html
+!frontend/src/
+!frontend/src/**
+**/__pycache__/
