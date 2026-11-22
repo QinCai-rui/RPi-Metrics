@@ -24,7 +24,9 @@ def classify_interface(name):
 
 
 def collect_network():
-    counters = psutil.net_io_counters(pernic=True)
+    counters = psutil.net_io_counters(pernic=True, nowrap=False)
+    if counters is None:
+        return {"interfaces": None}
     stats = psutil.net_if_stats()
     addresses = psutil.net_if_addrs()
 

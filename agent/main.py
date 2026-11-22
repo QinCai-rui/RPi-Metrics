@@ -1,36 +1,30 @@
-import logging
-from datetime import datetime, timezone
+import asyncio
+from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 
-from agent.metrics.cpu import collect_cpu
-from agent.metrics.disk import collect_disk
-from agent.metrics.memory import collect_memory
-from agent.metrics.network import collect_network
-from agent.metrics.system import collect_system
+from agent.metrics.sampler import MetricsSampler
 
-app = FastAPI(title="fleetmuster Agent", version="1.0.0")
-logger = logging.getLogger(__name__)
 
-def collect_metrics(collector):
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    sampler = MetricsSampler()
+    app.state.sampler = sampler
+    sampler.start()
     try:
-        return collector()
-    except Exception as e:
-        logger.error(f"Error collecting metrics from {collector.__name__}: {e}")
-        return None
+        yield
+    finally:
+        await asyncio.to_thread(sampler.stop)
+
+
+app = FastAPI(title="fleetmuster Agent", version="1.0.0", lifespan=lifespan)
+
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
+
 @app.get("/api/v1/metrics")
-def get_metrics():
-    return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "cpu": collect_metrics(collect_cpu),
-        "memory": collect_metrics(collect_memory),
-        "disk": collect_metrics(collect_disk),
-        "network": collect_metrics(collect_network),
-        "system": collect_metrics(collect_system),
-    }
-    
+def get_metrics(request: Request):
+    return request.app.state.sampler.snapshot()

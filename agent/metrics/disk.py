@@ -22,7 +22,7 @@ def collect_disk():
             "usage_percent": usage.percent,
         })
 
-    io = psutil.disk_io_counters(perdisk=True)
+    io = psutil.disk_io_counters(perdisk=True, nowrap=False)
 
     return {
         "filesystems": filesystems,
