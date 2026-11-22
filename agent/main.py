@@ -1,4 +1,6 @@
 import asyncio
+import hmac
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -10,6 +12,7 @@ from agent.metrics.sampler import MetricsSampler
 async def lifespan(app: FastAPI):
     sampler = MetricsSampler()
     app.state.sampler = sampler
+    app.state.activity_token = os.environ.get("FLEETMUSTER_ACTIVITY_TOKEN", "").encode()
     sampler.start()
     try:
         yield
@@ -27,4 +30,9 @@ def health():
 
 @app.get("/api/v1/metrics")
 def get_metrics(request: Request):
-    return request.app.state.sampler.snapshot()
+    sampler = request.app.state.sampler
+    token = getattr(request.app.state, "activity_token", b"")
+    if (token and request.client and request.client.host in {"127.0.0.1", "::1"}
+            and hmac.compare_digest(request.headers.get("X-Fleetmuster-Activity", "").encode(), token)):
+        sampler.keep_active(seconds=12)
+    return sampler.snapshot()

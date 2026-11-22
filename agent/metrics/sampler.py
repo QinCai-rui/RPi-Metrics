@@ -65,6 +65,7 @@ class MetricsSampler:
         self.clock = clock
         self._condition = threading.Condition()
         self._active = False
+        self._active_until = 0
         self._stopping = False
         self._thread = None
         self._data = {name: None for name in self.collectors}
@@ -102,15 +103,24 @@ class MetricsSampler:
             self._active = bool(active)
             self._condition.notify_all()
 
+    def keep_active(self, seconds):
+        with self._condition:
+            now = self.clock()
+            was_active = self._active or now < self._active_until
+            self._active_until = now + seconds
+            if not was_active:
+                self._condition.notify_all()
+
     def snapshot(self):
         with self._condition:
             now = self.clock()
+            active = self._active or now < self._active_until
             result = copy.deepcopy(self._data)
             result["timestamp"] = max((t for t in self._times.values() if t), default=None)
             result["freshness"] = {
                 name: {"sampled_at": self._times[name],
                        "age_seconds": max(0, now - sampled) if sampled is not None else None,
-                       "interval_seconds": self.intervals[name][int(self._active)]}
+                       "interval_seconds": self.intervals[name][active]}
                 for name, sampled in self._monotonic_times.items()
             }
             return result
@@ -127,10 +137,11 @@ class MetricsSampler:
                 if self._stopping:
                     return
                 now = self.clock()
+                active = self._active or now < self._active_until
                 due = [name for name, last in attempted.items()
-                       if last is None or now >= last + self.intervals[name][int(self._active)]]
+                       if last is None or now >= last + self.intervals[name][active]]
                 if not due:
-                    delay = min(last + self.intervals[name][int(self._active)] - now
+                    delay = min(last + self.intervals[name][active] - now
                                 for name, last in attempted.items())
                     self._condition.wait(timeout=max(0, delay))
                     continue

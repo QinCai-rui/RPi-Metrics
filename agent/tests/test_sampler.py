@@ -2,6 +2,7 @@ import asyncio
 import threading
 import time
 from collections import namedtuple
+from types import SimpleNamespace
 
 import pytest
 
@@ -136,3 +137,32 @@ def test_endpoint_only_reads_cache():
     })()
     assert get_metrics(request) == {"cpu": None}
     assert calls == ["snapshot"]
+
+
+def test_activity_requires_loopback_and_token_and_expires():
+    now = 0
+    sampler = MetricsSampler(clock=lambda: now)
+    request = SimpleNamespace(
+        app=SimpleNamespace(state=SimpleNamespace(sampler=sampler, activity_token=b"test-token")),
+        client=SimpleNamespace(host="127.0.0.1"),
+        headers={},
+    )
+
+    def cpu_interval():
+        return get_metrics(request)["freshness"]["cpu"]["interval_seconds"]
+
+    assert cpu_interval() == 30
+    request.headers["X-Fleetmuster-Activity"] = "wrong"
+    assert cpu_interval() == 30
+    request.headers["X-Fleetmuster-Activity"] = "test-token"
+    request.client.host = "192.0.2.8"
+    assert cpu_interval() == 30
+    request.client.host = "127.0.0.1"
+    assert cpu_interval() == 5
+    now = 8
+    assert cpu_interval() == 5
+    request.headers.clear()
+    now = 13
+    assert cpu_interval() == 5
+    now = 21
+    assert cpu_interval() == 30
